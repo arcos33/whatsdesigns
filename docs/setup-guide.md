@@ -811,4 +811,79 @@ Recommended browser extensions for development:
 - [Tailwind CSS Documentation](https://tailwindcss.com/docs)
 - [TypeScript Documentation](https://www.typescriptlang.org/docs)
 - [ESLint Documentation](https://eslint.org/docs)
-- [Prettier Documentation](https://prettier.io/docs) 
+- [Prettier Documentation](https://prettier.io/docs)
+
+## System Recovery and Troubleshooting
+
+### Display Issues
+If you encounter a black screen after system boot (while system is still running):
+1. Verify system is running:
+   - Try SSH access
+   - Check if services are responding
+2. Try software fixes first:
+   ```bash
+   # Reset display sleep settings
+   sudo pmset -a displaysleep 0
+   sudo pmset -a sleep 0
+   
+   # Reset WindowServer
+   sudo killall WindowServer
+   ```
+3. If software fixes fail, perform hardware reset:
+   - Shut down the system completely
+   - Press and hold Power button for 10 seconds
+   - Wait 30 seconds
+   - Press and hold these keys together for 20 seconds:
+     * Command (⌘)
+     * Option (Alt)
+     * P
+     * R
+   - Release the keys
+   - Press Power button normally to start
+
+### Auto-login Configuration
+When configuring auto-login:
+1. Always test in a controlled environment
+2. Ensure SSH access is configured as backup
+3. Have hardware reset steps ready
+4. Back up all code before testing
+5. Document all configuration changes
+
+### Backup Procedures
+1. Git Repository:
+   ```bash
+   # Initialize Git
+   git init
+   
+   # Add remote
+   git remote add origin your-repo-url
+   
+   # Stage and commit
+   git add .
+   git commit -m "Your message"
+   
+   # Push to remote
+   git push -u origin main
+   ```
+2. SSH Key Setup:
+   ```bash
+   # Generate SSH key
+   ssh-keygen -t ed25519 -C "your-key-name"
+   
+   # Display public key
+   cat ~/.ssh/id_ed25519.pub
+   ```
+3. Add SSH key to GitHub:
+   - Go to GitHub Settings
+   - SSH and GPG keys
+   - New SSH key
+   - Paste public key
+
+### Emergency Recovery
+Always maintain:
+1. SSH access configuration
+2. Backup admin account
+3. Hardware reset instructions
+4. Current backups
+5. System logs
+6. Recovery documentation 
