@@ -1,0 +1,14 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+When starting a new chat, always check for and read the dev-journal.md file in the workspace. Use this as the primary source of context for the project's current state, requirements, and next steps. The journal contains:
+- Environment setup details
+- Project requirements
+- Technical stack decisions
+- Project setup progress
+- Next steps
+- Important notes
+
+Always continue from where the journal left off and update it as we make progress.

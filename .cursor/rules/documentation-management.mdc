@@ -1,0 +1,291 @@
+# Documentation Management Rules
+
+## Overview
+When working on the project, continuously update and maintain documentation to ensure it remains accurate, relevant, and helpful for all team members.
+
+## Documentation Update Guidelines
+
+### 1. Real-time Updates
+- Update relevant documentation files immediately when making significant changes to the codebase
+- Document new features, components, or functionality as they are implemented
+- Update API documentation when endpoints are modified
+- Reflect changes in database schema when models are updated
+- Document development issues and their solutions in real-time
+- Update troubleshooting guides with new issues and fixes
+- Log all environment-specific configurations and requirements
+
+### 2. Documentation Creation
+- Create new documentation files when identifying undocumented aspects of the project
+- Follow the established structure in the index.md file
+- Ensure new documentation aligns with existing documentation style and format
+- Add appropriate cross-references to related documentation
+- Create issue-specific documentation when encountering new problems
+- Document environment-specific setup requirements
+
+### 3. Documentation Quality
+- Be clear and concise in all documentation
+- Use consistent terminology throughout
+- Include practical examples where appropriate
+- Keep technical details accurate and up-to-date
+- Use proper markdown formatting for readability
+- Include error messages and their solutions
+- Document environment-specific configurations
+
+### 4. Documentation Organization
+- Place new documentation in appropriate sections as defined in index.md
+- Update index.md when adding new documentation files
+- Maintain logical grouping of related documentation
+- Use clear and descriptive file names
+- Keep development issues and solutions in a dedicated section
+- Organize troubleshooting guides by environment
+
+### 5. Documentation Maintenance
+- Review and update documentation during code reviews
+- Remove outdated or incorrect information
+- Add notes about deprecated features or upcoming changes
+- Keep documentation in sync with the current state of the project
+- Update troubleshooting guides with new solutions
+- Maintain environment-specific documentation
+
+### 6. Code Cleanup
+- Remove code from unsuccessful implementation attempts once a working solution is found
+- Document unsuccessful approaches in the troubleshooting guide, not in the code
+- Include only the final working solution in production code
+- Add comments explaining why certain approaches were chosen over others
+- Remove debugging code, console logs, and testing code before committing
+- Keep code clean, readable, and free of commented-out blocks
+- Document complex workarounds with clear explanations
+
+### 7. Experimentation Workflow
+- Create separate feature branches for experimental approaches
+- Delete unsuccessful experiment branches after documenting learnings
+- Keep unsuccessful code attempts in the documentation, not in the codebase
+- When multiple approaches were tried, document each with pros/cons
+- Include reasons why the final approach was chosen
+- Document performance implications of different approaches
+- Reference key learnings from failed attempts in technical documentation
+
+### 8. Documentation Types to Maintain
+- Core Documentation
+  - Development Journal (daily updates)
+  - Project Overview
+  - Technical Stack
+  - Development Issues Log
+- User Experience
+  - User Flow
+  - Wireframes
+  - Design System
+- Technical Documentation
+  - Authentication
+  - Database Schema
+  - API Documentation
+  - Image Processing
+  - AI Integration
+  - Environment Configuration
+- Development Guidelines
+  - Setup Guide
+  - Coding Standards
+  - Testing Strategy
+  - Deployment
+  - Troubleshooting Guide
+- Project Management
+  - Timeline
+  - Dependencies
+  - Security
+- Maintenance
+  - Troubleshooting
+  - Performance
+  - Monitoring
+  - Environment Issues
+- Contributing
+  - Contributing Guidelines
+  - Code Review Process
+
+### 9. Documentation Update Process
+1. Identify affected documentation
+2. Review current content
+3. Make necessary updates
+4. Add new documentation if needed
+5. Update index.md if required
+6. Verify cross-references
+7. Ensure formatting consistency
+8. Document any issues encountered
+9. Update troubleshooting guides
+
+### 10. Documentation Standards
+- Use present tense for current features
+- Use future tense for planned features
+- Include version numbers for dependencies
+- Document breaking changes clearly
+- Provide migration guides when necessary
+- Include environment-specific requirements
+- Document error messages and solutions
+
+### 11. Documentation Review
+- Review documentation during code reviews
+- Verify technical accuracy
+- Check for completeness
+- Ensure clarity and readability
+- Validate examples and code snippets
+- Verify environment-specific instructions
+- Check troubleshooting guides
+
+### 12. Documentation Version Control
+- Commit documentation changes with related code changes
+- Use clear commit messages for documentation updates
+- Maintain documentation history
+- Track major documentation changes
+- Include environment-specific changes
+- Document breaking changes
+
+## Examples
+
+### Adding New Feature Documentation
+```markdown
+# New Feature Documentation
+
+## Overview
+[Clear description of the feature]
+
+## Implementation
+[Technical details and implementation notes]
+
+## Usage
+[Examples and usage guidelines]
+
+## Environment Requirements
+- Development: [requirements]
+- Production: [requirements]
+
+## Related Documentation
+- [Link to related docs]
+- [Link to API endpoints]
+```
+
+### Documenting Development Issues
+```markdown
+## Issue: [Issue Title]
+**Date:** [YYYY-MM-DD]
+**Environment:** [Development/Production]
+**Error:** [Error message]
+**Solution:** [Solution steps]
+**Prevention:** [How to prevent this issue]
+**Related Documentation:**
+- [Links to related docs]
+```
+
+### Documenting Failed Approaches
+```markdown
+## Feature: [Feature Name]
+**Implementation Attempts:**
+
+### Attempt 1: [Approach Description]
+**Date:** [YYYY-MM-DD]
+**Code Approach:** [Brief description of implementation]
+**Issues Encountered:**
+- [Issue 1]
+- [Issue 2]
+**Reasons for Failure:**
+- [Reason 1]
+- [Reason 2]
+**Key Learnings:**
+- [Learning 1]
+- [Learning 2]
+
+### Attempt 2: [Approach Description]
+**Date:** [YYYY-MM-DD]
+**Code Approach:** [Brief description of implementation]
+**Issues Encountered:**
+- [Issue 1]
+- [Issue 2]
+**Reasons for Failure:**
+- [Reason 1]
+- [Reason 2]
+**Key Learnings:**
+- [Learning 1]
+- [Learning 2]
+
+### Final Solution: [Approach Description]
+**Date:** [YYYY-MM-DD]
+**Code Approach:** [Brief description of implementation]
+**Why This Worked:**
+- [Reason 1]
+- [Reason 2]
+**Performance Considerations:**
+- [Consideration 1]
+- [Consideration 2]
+```
+
+### Updating Existing Documentation
+```markdown
+## Previous Content
+[Original content]
+
+## Updated Content
+[New or modified content]
+
+## Changes Made
+- [List of changes]
+- [Reason for changes]
+- [Environment affected]
+```
+
+### Creating New Documentation File
+1. Create new .md file in docs directory
+2. Add content following established format
+3. Update index.md with new entry
+4. Add cross-references to related documentation
+5. Update any affected existing documentation
+6. Document environment-specific requirements
+
+## Best Practices
+
+### Writing Style
+- Use clear, concise language
+- Avoid technical jargon unless necessary
+- Provide context for technical terms
+- Use consistent formatting
+- Include practical examples
+- Document environment-specific details
+
+### Code Examples
+- Use TypeScript for type safety
+- Include error handling
+- Show complete, working examples
+- Add comments for clarity
+- Follow project coding standards
+- Include environment-specific configurations
+
+### Visual Elements
+- Use diagrams when helpful
+- Include screenshots for UI changes
+- Maintain consistent styling
+- Ensure accessibility
+- Optimize for readability
+- Include environment-specific screenshots
+
+### Maintenance
+- Regular review schedule
+- Update with code changes
+- Remove outdated content
+- Add new sections as needed
+- Maintain cross-references
+- Update environment-specific documentation
+
+## Documentation Tools
+
+### Recommended Tools
+- Markdown editors
+- Diagram creation tools
+- Code snippet formatters
+- Documentation generators
+- Version control integration
+- Environment management tools
+
+### Automation
+- Automated documentation generation
+- Link checking
+- Format validation
+- Version tracking
+- Change detection
+- Environment validation 

@@ -1,0 +1,46 @@
+{
+  "version": "1.0.0",
+  "autoUpdate": true,
+  "files": {
+    "dev-journal.md": {
+      "type": "journal",
+      "updateTriggers": ["code_changes", "environment_changes", "configuration_changes", "dependency_changes"],
+      "dateFormat": "MMMM DD, YYYY"
+    },
+    "docs/technical-stack.md": {
+      "type": "reference",
+      "updateTriggers": ["infrastructure_changes", "dependency_changes", "security_changes", "api_changes"]
+    },
+    "docs/setup-guide.md": {
+      "type": "guide",
+      "updateTriggers": ["installation_steps", "configuration_changes", "dependency_changes", "troubleshooting_updates"]
+    }
+  },
+  "sections": {
+    "dev-journal": [
+      "Environment Setup",
+      "Project Requirements",
+      "Technical Stack",
+      "Project Setup",
+      "Next Steps",
+      "Notes"
+    ],
+    "technical-stack": [
+      "Core Technologies",
+      "Development Environment",
+      "Infrastructure",
+      "Security",
+      "Monitoring & Analytics",
+      "Development Workflow",
+      "Dependencies",
+      "Environment Variables"
+    ],
+    "setup-guide": [
+      "Prerequisites",
+      "Project Setup",
+      "Domain Configuration",
+      "Troubleshooting",
+      "Maintenance"
+    ]
+  }
+} 
