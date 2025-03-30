@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { env } from "@/utils/env";
-import { EnvironmentTest } from "@/components/EnvironmentTest";
+import EnvironmentTest from '@/components/EnvironmentTest';
 
 export default function Home() {
   return (

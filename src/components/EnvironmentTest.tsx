@@ -1,15 +1,20 @@
-import { env, isProduction } from '@/utils/env';
+import { env } from '@/utils/env';
 
-export function EnvironmentTest() {
+export default function EnvironmentTest() {
   return (
-    <div className="fixed bottom-4 right-4 bg-gray-800 text-white p-4 rounded-lg shadow-lg text-sm">
-      <h3 className="font-bold mb-2">Environment Info</h3>
+    <div className="p-4 bg-gray-100 rounded-lg">
+      <h2 className="text-lg font-semibold mb-2">Environment Information</h2>
       <div className="space-y-1">
-        <p>Mode: {isProduction ? 'Production' : 'Development'}</p>
-        <p>API URL: {env.apiUrl}</p>
-        <p>Site URL: {env.siteUrl}</p>
-        <p>CDN URL: {env.cdnUrl}</p>
-        {env.analyticsId && <p>Analytics: Enabled</p>}
+        <p><span className="font-medium">Mode:</span> {env.isDevelopment ? 'Development' : 'Production'}</p>
+        <p><span className="font-medium">API URL:</span> {env.apiUrl}</p>
+        <p><span className="font-medium">Site URL:</span> {env.siteUrl}</p>
+        <p><span className="font-medium">Environment:</span> {env.environment}</p>
+        {env.analyticsId && (
+          <p><span className="font-medium">Analytics ID:</span> {env.analyticsId}</p>
+        )}
+        {env.cdnUrl && (
+          <p><span className="font-medium">CDN URL:</span> {env.cdnUrl}</p>
+        )}
       </div>
     </div>
   );

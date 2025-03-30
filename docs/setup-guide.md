@@ -157,6 +157,224 @@ npm run build:prod
 npm test
 ```
 
+## Troubleshooting Common Issues
+
+### Tailwind CSS Configuration Issues
+
+When working with Next.js 15.2.4 and Tailwind CSS, you may encounter this error:
+
+```
+Error: It looks like you're trying to use `tailwindcss` directly as a PostCSS plugin. 
+The PostCSS plugin has moved to a separate package, so to continue using Tailwind CSS 
+with PostCSS you'll need to install `@tailwindcss/postcss` and update your PostCSS configuration.
+```
+
+#### Solution:
+
+1. Uninstall conflicting packages:
+   ```bash
+   npm uninstall tailwindcss autoprefixer postcss @tailwindcss/forms @tailwindcss/typography @tailwindcss/postcss @tailwindcss/postcss7-compat
+   ```
+
+2. Install the correct packages:
+   ```bash
+   npm install -D @tailwindcss/postcss autoprefixer postcss
+   npm install -D @tailwindcss/forms @tailwindcss/typography
+   ```
+
+3. Update your PostCSS configuration in `postcss.config.js`:
+   ```javascript
+   module.exports = {
+     plugins: {
+       '@tailwindcss/postcss': {},
+       autoprefixer: {},
+     },
+   };
+   ```
+
+4. If you're still having issues, try these specific versions which are known to work with Next.js 15.2.4:
+   ```bash
+   npm install -D tailwindcss@3.3.0 postcss@8.4.23 autoprefixer@10.4.14
+   ```
+
+### Port Conflicts
+
+If you see this error when starting the development server:
+
+```
+Error: listen EADDRINUSE: address already in use :::3000
+```
+
+#### Solution:
+
+1. Find the process using port 3000:
+   ```bash
+   lsof -i :3000
+   ```
+
+2. Kill the process (replace PID with the actual process ID from the previous command):
+   ```bash
+   kill PID
+   ```
+
+3. Alternatively, modify `package.json` to use a different port:
+   ```json
+   "scripts": {
+     "dev": "next dev -p 3001",
+   }
+   ```
+
+### Environment Module Import Errors
+
+You might encounter errors related to importing from the environment utility:
+
+```
+Type error: Module '"./env"' has no exported member 'isDevelopment'.
+```
+
+#### Solution:
+
+1. Make sure `src/utils/env.ts` exports all necessary values:
+   ```typescript
+   export const env = {
+     isDevelopment: process.env.NODE_ENV === 'development',
+     isProduction: process.env.NODE_ENV === 'production',
+     apiUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api',
+     siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+     // ... other environment variables
+   };
+   ```
+
+2. Update imports in other files to use the `env` object:
+   ```typescript
+   // Instead of
+   import { isDevelopment } from './env';
+   
+   // Use
+   import { env } from './env';
+   // and then
+   if (env.isDevelopment) { ... }
+   ```
+
+### MongoDB Connection Issues
+
+If you encounter MongoDB connection errors:
+
+#### Solution:
+
+1. Make sure MongoDB is running:
+   ```bash
+   brew services list | grep mongodb
+   ```
+
+2. Start MongoDB if it's not running:
+   ```bash
+   brew services start mongodb-community
+   ```
+
+3. Verify connectivity:
+   ```bash
+   mongosh --eval "db.runCommand({ping: 1})"
+   ```
+
+4. Check your MongoDB connection string in `.env`:
+   ```
+   MONGODB_URI=mongodb://localhost:27017/whatsdesigns
+   ```
+
+### Missing Environment Variables
+
+If you encounter errors about missing environment variables:
+
+#### Solution:
+
+1. Ensure you have the correct `.env` file:
+   ```bash
+   # For development
+   cp .env.example .env
+   
+   # For production
+   cp .env.example .env.production
+   ```
+
+2. Set the required environment variables in your `.env` file:
+   ```
+   # Application URLs
+   NEXT_PUBLIC_API_URL=http://localhost:3000/api
+   NEXT_PUBLIC_SITE_URL=http://localhost:3000
+   
+   # Authentication
+   NEXTAUTH_URL=http://localhost:3000
+   NEXTAUTH_SECRET=your-secret-key-here
+   
+   # OpenAI Configuration
+   OPENAI_API_KEY=your-openai-api-key
+   
+   # MongoDB Configuration
+   MONGODB_URI=mongodb://localhost:27017/whatsdesigns
+   
+   # Environment
+   NODE_ENV=development
+   ```
+
+### Production Build Failures
+
+If your production build fails:
+
+#### Solution:
+
+1. Check if `.next` directory exists and remove it:
+   ```bash
+   rm -rf .next
+   ```
+
+2. Ensure you have the correct environment variables set in `.env.production`:
+   ```bash
+   cp .env.example .env.production
+   ```
+
+3. Try a clean install of dependencies:
+   ```bash
+   rm -rf node_modules
+   npm cache clean --force
+   npm install
+   ```
+
+4. Build the production version:
+   ```bash
+   npm run build:prod
+   ```
+
+5. Start the production server:
+   ```bash
+   npm run start:prod
+   ```
+
+### Type Errors After Cloning
+
+If you encounter TypeScript errors after cloning:
+
+#### Solution:
+
+1. Update your TypeScript configuration in `tsconfig.json` to include path aliases:
+   ```json
+   {
+     "compilerOptions": {
+       // ... other options
+       "baseUrl": ".",
+       "paths": {
+         "@/*": ["src/*"]
+       }
+     }
+   }
+   ```
+
+2. Regenerate the `.next` folder and TypeScript definitions:
+   ```bash
+   npx prisma generate
+   npm run dev
+   ```
+
 ## Additional Resources
 - [Next.js Documentation](https://nextjs.org/docs)
 - [React Documentation](https://react.dev)
@@ -227,6 +445,104 @@ Before you begin, ensure you have the following installed:
    # Start Nginx service
    brew services start nginx
    ```
+
+## Quick Start After Cloning
+
+If you've just cloned the repository, follow these steps to get the project up and running quickly:
+
+### 1. Install Dependencies
+
+```bash
+# Ensure you're using the correct Node.js version
+nvm use 20.19.0
+
+# Install dependencies
+npm install
+```
+
+### 2. Set Up Environment Variables
+
+```bash
+# Create development environment file
+cp .env.example .env
+# or if .env.example doesn't exist, create .env with the following content:
+
+# Application URLs
+NEXT_PUBLIC_API_URL=http://localhost:3000/api
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+
+# Authentication
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your-secret-key-here
+
+# OpenAI Configuration
+OPENAI_API_KEY=your-openai-api-key
+
+# MongoDB Configuration
+MONGODB_URI=mongodb://localhost:27017/whatsdesigns
+
+# Environment
+NODE_ENV=development
+```
+
+### 3. Fix Tailwind CSS Configuration
+
+Next.js 15.2.4 requires specific Tailwind CSS setup:
+
+```bash
+# Remove any conflicting packages
+npm uninstall tailwindcss autoprefixer postcss @tailwindcss/postcss @tailwindcss/postcss7-compat
+
+# Install correct packages
+npm install -D @tailwindcss/postcss autoprefixer postcss
+npm install -D @tailwindcss/forms @tailwindcss/typography
+```
+
+Update your PostCSS configuration in `postcss.config.js`:
+
+```javascript
+module.exports = {
+  plugins: {
+    '@tailwindcss/postcss': {},
+    autoprefixer: {},
+  },
+};
+```
+
+### 4. Ensure MongoDB is Running
+
+```bash
+# Start MongoDB if not already running
+brew services start mongodb-community
+
+# Verify MongoDB connection
+mongosh --eval "db.runCommand({ping: 1})"
+```
+
+### 5. Start Development Server
+
+```bash
+# Start the development server
+npm run dev
+
+# If port 3000 is in use, find and kill the process
+lsof -i :3000
+kill <PID>
+```
+
+The development server should now be running at http://localhost:3000.
+
+### 6. Building for Production
+
+```bash
+# Build the production version
+npm run build:prod
+
+# Start the production server
+npm run start:prod
+```
+
+The production server will be available at http://localhost:3002.
 
 ## Project Setup
 

@@ -1,0 +1,163 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum ProjectStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum DesignStatus {
+  DRAFT
+  PROCESSING
+  COMPLETED
+}
+
+enum UsageType {
+  IMAGE_UPLOAD
+  TEXT_ENHANCEMENT
+}
+
+enum CollaboratorRole {
+  VIEWER
+  EDITOR
+  OWNER
+}
+
+model User {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  email           String    @unique
+  password        String
+  name            String
+  image           String?
+  role            UserRole  @default(USER)
+  verified        Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  lastLogin       DateTime?
+  oauthProviders  OAuthProvider[]
+  resetToken      String?
+  resetTokenExpiry DateTime?
+  settings        Json?
+  
+  // Relations
+  projects        Project[]
+  designs         Design[]
+  comments        Comment[]
+  usage           Usage[]
+}
+
+type OAuthProvider {
+  provider        String
+  providerId      String
+}
+
+model Project {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String    @db.ObjectId
+  name            String
+  description     String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  status          ProjectStatus @default(DRAFT)
+  settings        ProjectSettings?
+  collaborators   Collaborator[]
+  
+  // Relations
+  user            User      @relation(fields: [userId], references: [id])
+  designs         Design[]
+}
+
+type ProjectSettings {
+  isPublic        Boolean   @default(false)
+  allowComments   Boolean   @default(true)
+}
+
+type Collaborator {
+  userId          String    @db.ObjectId
+  role            CollaboratorRole
+}
+
+model Design {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  projectId       String    @db.ObjectId
+  userId          String    @db.ObjectId
+  title           String
+  description     String?
+  imageUrl        String
+  originalText    String
+  enhancedText    String?
+  status          DesignStatus @default(DRAFT)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  metadata        DesignMetadata?
+  tags            String[]
+  versions        TextVersion[]
+  
+  // Relations
+  project         Project   @relation(fields: [projectId], references: [id])
+  user            User      @relation(fields: [userId], references: [id])
+  comments        Comment[]
+}
+
+type DesignMetadata {
+  imageSize       Int
+  imageType       String
+  processingTime  Int?
+}
+
+type TextVersion {
+  text            String
+  timestamp       DateTime
+  changes         String?
+}
+
+model Comment {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  designId        String    @db.ObjectId
+  userId          String    @db.ObjectId
+  content         String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  parentId        String?   @db.ObjectId
+  likes           String[]  @db.ObjectId
+  
+  // Relations
+  design          Design    @relation(fields: [designId], references: [id])
+  user            User      @relation(fields: [userId], references: [id])
+}
+
+model Usage {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String    @db.ObjectId
+  date            DateTime  @default(now())
+  type            UsageType
+  count           Int
+  metadata        UsageMetadata?
+  
+  // Relations
+  user            User      @relation(fields: [userId], references: [id])
+}
+
+type UsageMetadata {
+  imageSize       Int?
+  processingTime  Int?
+  success         Boolean
+}

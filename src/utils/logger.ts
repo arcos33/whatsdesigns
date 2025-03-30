@@ -1,4 +1,4 @@
-import { isDevelopment } from './env';
+import { env } from './env';
 
 type LogLevel = 'info' | 'warn' | 'error' | 'debug';
 
@@ -37,7 +37,7 @@ class Logger {
     const formattedMessage = this.formatMessage(level, message, data);
     this.logs.push(formattedMessage);
 
-    if (isDevelopment) {
+    if (env.isDevelopment) {
       const color = {
         info: '\x1b[36m', // Cyan
         warn: '\x1b[33m', // Yellow
@@ -65,7 +65,7 @@ class Logger {
   }
 
   debug(message: string, data?: LogData) {
-    if (isDevelopment) {
+    if (env.isDevelopment) {
       this.log('debug', message, data);
     }
   }
