@@ -181,7 +181,7 @@ with PostCSS you'll need to install `@tailwindcss/postcss` and update your PostC
    npm install -D tailwindcss@3.3.0 postcss@8.4.23 autoprefixer@10.4.14
    ```
 
-3. Update your PostCSS configuration in `postcss.config.js`:
+3. Update your PostCSS configuration in `postcss.config.mjs`:
    ```javascript
    module.exports = {
      plugins: {
@@ -1177,40 +1177,38 @@ Always maintain:
 5. System logs
 6. Recovery documentation
 
-## Domain and SSL Setup
+## Nginx and SSL Configuration
 
-### Installing and Configuring Nginx
+### Prerequisites
+- Nginx installed via Homebrew
+- Certbot installed for SSL certificate management
+- Domain pointing to your server (for production)
+- Root access for SSL certificate management
 
-1. Install Nginx using Homebrew:
+### Installation Steps
+
+1. Install Nginx:
    ```bash
    brew install nginx
    ```
 
-2. Start Nginx service:
+2. Install Certbot:
    ```bash
-   brew services start nginx
+   brew install certbot
    ```
 
-3. Verify installation:
-   ```bash
-   nginx -v
-   ```
-
-4. Default Nginx configuration:
-   - Configuration file: `/opt/homebrew/etc/nginx/nginx.conf`
-   - Default port: 8080
-   - Document root: `/opt/homebrew/var/www`
-   - Server configurations directory: `/opt/homebrew/etc/nginx/servers/`
-
-### Setting up Domain Configuration
-
-1. Create a new server configuration for whatsdesigns.com:
+3. Create required directories:
    ```bash
    sudo mkdir -p /opt/homebrew/etc/nginx/servers
+   sudo mkdir -p /opt/homebrew/etc/nginx/ssl/whatsdesigns.com
+   ```
+
+4. Create Nginx configuration:
+   ```bash
    sudo nano /opt/homebrew/etc/nginx/servers/whatsdesigns.conf
    ```
 
-2. Add the following configuration:
+5. Add the following configuration:
    ```nginx
    # HTTP Server (Redirect to HTTPS)
    server {
@@ -1254,46 +1252,75 @@ Always maintain:
    }
    ```
 
-3. Create SSL certificate directory:
-   ```bash
-   sudo mkdir -p /opt/homebrew/etc/nginx/ssl/whatsdesigns.com
-   ```
-
 ### SSL Certificate Setup
 
-1. Install Certbot for SSL certificate management:
+#### For Local Development
+1. Generate self-signed certificate:
    ```bash
-   brew install certbot
+   sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+     -keyout /opt/homebrew/etc/nginx/ssl/whatsdesigns.com/privkey.pem \
+     -out /opt/homebrew/etc/nginx/ssl/whatsdesigns.com/fullchain.pem \
+     -subj "/CN=whatsdesigns.com"
    ```
 
-2. Generate SSL certificate:
+2. Add to hosts file:
    ```bash
-   sudo certbot certonly --nginx -d whatsdesigns.com -d www.whatsdesigns.com
+   sudo nano /etc/hosts
+   ```
+   Add:
+   ```
+   127.0.0.1 whatsdesigns.com www.whatsdesigns.com
    ```
 
-3. Set up automatic renewal:
+#### For Production
+1. Stop Nginx:
+   ```bash
+   brew services stop nginx
+   ```
+
+2. Obtain SSL certificate:
+   ```bash
+   sudo certbot certonly --standalone -d whatsdesigns.com -d www.whatsdesigns.com
+   ```
+
+3. Start Nginx:
+   ```bash
+   brew services start nginx
+   ```
+
+4. Set up automatic renewal:
    ```bash
    sudo certbot renew --dry-run
    ```
 
-4. Add renewal to crontab:
+5. Add to crontab:
    ```bash
    (crontab -l 2>/dev/null; echo "0 0 1 * * /usr/local/bin/certbot renew --quiet") | crontab -
    ```
 
-### Managing Nginx
+### Nginx Management
 
 1. Test configuration:
    ```bash
-   nginx -t
+   sudo nginx -t
    ```
 
-2. Reload configuration:
+2. Start Nginx:
+   ```bash
+   brew services start nginx
+   ```
+
+3. Stop Nginx:
+   ```bash
+   brew services stop nginx
+   ```
+
+4. Restart Nginx:
    ```bash
    brew services restart nginx
    ```
 
-3. View logs:
+5. View logs:
    ```bash
    tail -f /opt/homebrew/var/log/nginx/access.log
    tail -f /opt/homebrew/var/log/nginx/error.log
@@ -1306,13 +1333,13 @@ Always maintain:
    brew services list | grep nginx
    ```
 
-2. Verify ports are available:
+2. Verify ports:
    ```bash
    sudo lsof -i :80
    sudo lsof -i :443
    ```
 
-3. Test SSL configuration:
+3. Test SSL:
    ```bash
    curl -vI https://whatsdesigns.com
    ```
@@ -1321,7 +1348,7 @@ Always maintain:
    - Port 80/443 already in use: Check for other web servers
    - SSL certificate errors: Verify certificate paths and permissions
    - 502 Bad Gateway: Check if Next.js server is running
-   - Connection refused: Verify firewall settings and port forwarding
+   - Connection refused: Verify firewall settings
 
 ### Security Considerations
 
@@ -1330,12 +1357,24 @@ Always maintain:
    brew update && brew upgrade nginx
    ```
 
-2. Regular SSL certificate renewal checks:
+2. Monitor SSL certificates:
    ```bash
    certbot certificates
    ```
 
-3. Monitor SSL certificate expiration:
+3. Check certificate expiration:
    ```bash
    echo | openssl s_client -servername whatsdesigns.com -connect whatsdesigns.com:443 2>/dev/null | openssl x509 -noout -dates
-   ``` 
+   ```
+
+4. Regular security updates:
+   ```bash
+   brew update && brew upgrade
+   ```
+
+### Notes
+- Local development uses self-signed certificates
+- Production requires proper SSL certificates from Let's Encrypt
+- Browser security warnings are expected with self-signed certificates
+- Keep SSL certificates and private keys secure
+- Regular monitoring of SSL certificate expiration is recommended 
