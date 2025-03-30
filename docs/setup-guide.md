@@ -1175,4 +1175,167 @@ Always maintain:
 3. Hardware reset instructions
 4. Current backups
 5. System logs
-6. Recovery documentation 
+6. Recovery documentation
+
+## Domain and SSL Setup
+
+### Installing and Configuring Nginx
+
+1. Install Nginx using Homebrew:
+   ```bash
+   brew install nginx
+   ```
+
+2. Start Nginx service:
+   ```bash
+   brew services start nginx
+   ```
+
+3. Verify installation:
+   ```bash
+   nginx -v
+   ```
+
+4. Default Nginx configuration:
+   - Configuration file: `/opt/homebrew/etc/nginx/nginx.conf`
+   - Default port: 8080
+   - Document root: `/opt/homebrew/var/www`
+   - Server configurations directory: `/opt/homebrew/etc/nginx/servers/`
+
+### Setting up Domain Configuration
+
+1. Create a new server configuration for whatsdesigns.com:
+   ```bash
+   sudo mkdir -p /opt/homebrew/etc/nginx/servers
+   sudo nano /opt/homebrew/etc/nginx/servers/whatsdesigns.conf
+   ```
+
+2. Add the following configuration:
+   ```nginx
+   # HTTP Server (Redirect to HTTPS)
+   server {
+       listen 80;
+       server_name whatsdesigns.com www.whatsdesigns.com;
+       return 301 https://$server_name$request_uri;
+   }
+
+   # HTTPS Server
+   server {
+       listen 443 ssl http2;
+       server_name whatsdesigns.com www.whatsdesigns.com;
+
+       # SSL Configuration
+       ssl_certificate /opt/homebrew/etc/nginx/ssl/whatsdesigns.com/fullchain.pem;
+       ssl_certificate_key /opt/homebrew/etc/nginx/ssl/whatsdesigns.com/privkey.pem;
+       ssl_session_timeout 1d;
+       ssl_session_cache shared:SSL:50m;
+       ssl_session_tickets off;
+
+       # Modern SSL configuration
+       ssl_protocols TLSv1.2 TLSv1.3;
+       ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+       ssl_prefer_server_ciphers off;
+
+       # HSTS (uncomment if you're sure)
+       # add_header Strict-Transport-Security "max-age=63072000" always;
+
+       # Proxy to Next.js application
+       location / {
+           proxy_pass http://localhost:3002;
+           proxy_http_version 1.1;
+           proxy_set_header Upgrade $http_upgrade;
+           proxy_set_header Connection 'upgrade';
+           proxy_set_header Host $host;
+           proxy_cache_bypass $http_upgrade;
+           proxy_set_header X-Real-IP $remote_addr;
+           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+           proxy_set_header X-Forwarded-Proto $scheme;
+       }
+   }
+   ```
+
+3. Create SSL certificate directory:
+   ```bash
+   sudo mkdir -p /opt/homebrew/etc/nginx/ssl/whatsdesigns.com
+   ```
+
+### SSL Certificate Setup
+
+1. Install Certbot for SSL certificate management:
+   ```bash
+   brew install certbot
+   ```
+
+2. Generate SSL certificate:
+   ```bash
+   sudo certbot certonly --nginx -d whatsdesigns.com -d www.whatsdesigns.com
+   ```
+
+3. Set up automatic renewal:
+   ```bash
+   sudo certbot renew --dry-run
+   ```
+
+4. Add renewal to crontab:
+   ```bash
+   (crontab -l 2>/dev/null; echo "0 0 1 * * /usr/local/bin/certbot renew --quiet") | crontab -
+   ```
+
+### Managing Nginx
+
+1. Test configuration:
+   ```bash
+   nginx -t
+   ```
+
+2. Reload configuration:
+   ```bash
+   brew services restart nginx
+   ```
+
+3. View logs:
+   ```bash
+   tail -f /opt/homebrew/var/log/nginx/access.log
+   tail -f /opt/homebrew/var/log/nginx/error.log
+   ```
+
+### Troubleshooting
+
+1. Check Nginx status:
+   ```bash
+   brew services list | grep nginx
+   ```
+
+2. Verify ports are available:
+   ```bash
+   sudo lsof -i :80
+   sudo lsof -i :443
+   ```
+
+3. Test SSL configuration:
+   ```bash
+   curl -vI https://whatsdesigns.com
+   ```
+
+4. Common issues:
+   - Port 80/443 already in use: Check for other web servers
+   - SSL certificate errors: Verify certificate paths and permissions
+   - 502 Bad Gateway: Check if Next.js server is running
+   - Connection refused: Verify firewall settings and port forwarding
+
+### Security Considerations
+
+1. Keep Nginx updated:
+   ```bash
+   brew update && brew upgrade nginx
+   ```
+
+2. Regular SSL certificate renewal checks:
+   ```bash
+   certbot certificates
+   ```
+
+3. Monitor SSL certificate expiration:
+   ```bash
+   echo | openssl s_client -servername whatsdesigns.com -connect whatsdesigns.com:443 2>/dev/null | openssl x509 -noout -dates
+   ``` 
