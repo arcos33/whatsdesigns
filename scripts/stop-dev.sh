@@ -3,22 +3,25 @@
 # Configuration
 APP_DIR="/Users/jediOne/dev/whatsdesigns"
 LOG_DIR="$APP_DIR/logs"
-PROD_PID_FILE="$APP_DIR/prod.pid"
-DEV_PID_FILE="$APP_DIR/dev.pid"
-NOTIFY_SCRIPT="$APP_DIR/notify.sh"
+PID_FILE="$APP_DIR/dev.pid"
+NOTIFY_SCRIPT="$APP_DIR/scripts/notify.sh"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
 
 # Function to log messages
 log() {
-    mkdir -p "$LOG_DIR"
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> "$LOG_DIR/system_restart.log"
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+    echo "[$timestamp] $1" | tee -a "$LOG_DIR/stop-dev.log"
 }
 
 # Function to send notifications
 notify() {
     if [ -f "$NOTIFY_SCRIPT" ]; then
-        "$NOTIFY_SCRIPT" "$1"
-    else
-        echo "Notification: $1"
+        "$NOTIFY_SCRIPT" "Development Server" "$1"
     fi
 }
 
@@ -81,27 +84,30 @@ stop_process() {
 }
 
 # Main execution
-log "Starting system restart process..."
-
-# Stop the production server
-stop_process "$PROD_PID_FILE" "production server"
+log "Starting development environment shutdown..."
 
 # Stop the development server
-stop_process "$DEV_PID_FILE" "development server"
+stop_process "$PID_FILE" "development server"
+
+# Stop any Node.js processes running on port 3000
+if lsof -i :3000 > /dev/null 2>&1; then
+    log "Stopping process on port 3000..."
+    kill $(lsof -t -i :3000)
+    sleep 2
+fi
+
+# Stop MongoDB
+log "Stopping MongoDB..."
+if brew services stop mongodb-community; then
+    log "MongoDB stopped successfully"
+else
+    log "${RED}Failed to stop MongoDB${NC}"
+fi
 
 # Clean up temporary files
 log "Cleaning up temporary files..."
 rm -f "$APP_DIR/.next/server/app/_not-found/page.js.nft.json" 2>/dev/null
 
 # Final cleanup
-log "System restart process completed"
-
-# Notify user about restart
-notify "WhatsDesigns servers stopped. System will restart in 5 seconds..."
-
-# Wait 5 seconds to ensure all cleanup is complete
-sleep 5
-
-# Restart the computer
-log "Executing system restart command..."
-osascript -e 'tell app "System Events" to restart' 
+log "Development environment shutdown completed"
+notify "Development environment stopped" 

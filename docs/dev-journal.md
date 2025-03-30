@@ -720,3 +720,8 @@
 - Nginx will restart during renewal
 - Backups created before renewal
 - Monitor logs for any issues 
+
+## [2024-03-30] Path Migration Note
+- All paths have been migrated from `/Users/joelbiz` to `/Users/jediOne`
+- Historical entries below maintain original paths for reference
+- All scripts and configurations have been updated to use new paths 

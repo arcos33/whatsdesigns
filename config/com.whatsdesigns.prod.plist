@@ -6,33 +6,24 @@
     <string>com.whatsdesigns.prod</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/bin/zsh</string>
-        <string>-c</string>
-        <string>
-          export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin;
-          export NVM_DIR="$HOME/.nvm";
-          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh";
-          cd /Users/jediOne/dev/whatsdesigns;
-          nvm use 20.19.0;
-          HOST=whatsdesigns.com PORT=3002 NODE_ENV=production npm run start:prod >> /Users/jediOne/dev/whatsdesigns/logs/prod-output.log 2>> /Users/jediOne/dev/whatsdesigns/logs/prod-error.log
-        </string>
+        <string>/Users/jediOne/dev/whatsdesigns/scripts/start-prod.sh</string>
     </array>
     <key>RunAtLoad</key>
     <true/>
     <key>KeepAlive</key>
     <true/>
     <key>StandardOutPath</key>
-    <string>/Users/jediOne/dev/whatsdesigns/logs/prod-output.log</string>
+    <string>/Users/jediOne/dev/whatsdesigns/logs/prod-launchd-out.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/jediOne/dev/whatsdesigns/logs/prod-error.log</string>
+    <string>/Users/jediOne/dev/whatsdesigns/logs/prod-launchd-error.log</string>
+    <key>WorkingDirectory</key>
+    <string>/Users/jediOne/dev/whatsdesigns</string>
     <key>EnvironmentVariables</key>
     <dict>
         <key>PATH</key>
-        <string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        <string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin</string>
         <key>NODE_ENV</key>
         <string>production</string>
-        <key>HOST</key>
-        <string>whatsdesigns.com</string>
     </dict>
 </dict>
 </plist> 

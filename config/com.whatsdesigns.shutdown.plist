@@ -6,26 +6,26 @@
     <string>com.whatsdesigns.shutdown</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/joelbiz/dev/whatsdesigns/whatsdesigns/shutdown-prod.sh</string>
+        <string>/Users/jediOne/dev/whatsdesigns/whatsdesigns/shutdown-prod.sh</string>
     </array>
     <key>RunAtLoad</key>
-    <false/>
+    <true/>
     <key>KeepAlive</key>
     <false/>
     <key>StandardErrorPath</key>
-    <string>/Users/joelbiz/dev/whatsdesigns/whatsdesigns/logs/shutdown-error.log</string>
+    <string>/Users/jediOne/dev/whatsdesigns/whatsdesigns/logs/shutdown-error.log</string>
     <key>StandardOutPath</key>
-    <string>/Users/joelbiz/dev/whatsdesigns/whatsdesigns/logs/shutdown-output.log</string>
+    <string>/Users/jediOne/dev/whatsdesigns/whatsdesigns/logs/shutdown-output.log</string>
     <key>ProcessType</key>
     <string>Interactive</string>
     <key>WorkingDirectory</key>
-    <string>/Users/joelbiz/dev/whatsdesigns/whatsdesigns</string>
+    <string>/Users/jediOne/dev/whatsdesigns/whatsdesigns</string>
     <key>EnvironmentVariables</key>
     <dict>
         <key>NODE_ENV</key>
         <string>production</string>
         <key>PATH</key>
-        <string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/joelbiz/.nvm/versions/node/v20.19.0/bin</string>
+        <string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/jediOne/.nvm/versions/node/v20.19.0/bin</string>
     </dict>
 </dict>
 </plist> 

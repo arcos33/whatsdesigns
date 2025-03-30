@@ -1,14 +1,33 @@
 #!/bin/bash
 
 # Configuration
-APP_DIR="/Users/joelbiz/dev/whatsdesigns"
+APP_DIR="/Users/jediOne/dev/whatsdesigns"
 LOG_DIR="$APP_DIR/logs"
 PROD_PID_FILE="$APP_DIR/prod.pid"
 DEV_PID_FILE="$APP_DIR/dev.pid"
-NOTIFY_SCRIPT="$APP_DIR/notify.sh"
+NOTIFY_SCRIPT="$APP_DIR/scripts/notify.sh"
+
+# Function to ensure directories exist
+ensure_directories() {
+    # Create logs directory if it doesn't exist
+    if [ ! -d "$LOG_DIR" ]; then
+        mkdir -p "$LOG_DIR"
+        chmod 755 "$LOG_DIR"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Created logs directory" >> "$LOG_DIR/restart.log"
+    fi
+
+    # Create .next directory if it doesn't exist
+    if [ ! -d "$APP_DIR/.next/server/app" ]; then
+        mkdir -p "$APP_DIR/.next/server/app"
+        chmod -R 755 "$APP_DIR/.next"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Created Next.js build directories" >> "$LOG_DIR/restart.log"
+    fi
+}
 
 # Function to log messages
 log() {
+    # Ensure log directory exists
+    mkdir -p "$LOG_DIR"
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> "$LOG_DIR/restart.log"
 }
 
@@ -201,10 +220,11 @@ show_usage() {
 }
 
 # Main execution
+ensure_directories
+
+# Parse command line arguments
 if [ "$1" = "--system" ]; then
     restart_system
-elif [ -z "$1" ]; then
-    restart_application
 else
-    show_usage
+    restart_application
 fi 

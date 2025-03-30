@@ -1,27 +1,26 @@
 #!/bin/bash
 
 # Configuration
-APP_DIR="/Users/joelbiz/dev/whatsdesigns"
+APP_DIR="/Users/jediOne/dev/whatsdesigns"
 LOG_DIR="$APP_DIR/logs"
 PROD_PID_FILE="$APP_DIR/prod.pid"
 DEV_PID_FILE="$APP_DIR/dev.pid"
-NOTIFY_SCRIPT="$APP_DIR/notify.sh"
+NOTIFY_SCRIPT="$APP_DIR/scripts/notify.sh"
 
-# Log current directory
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] Current directory before navigation: $(pwd)" >> "$LOG_DIR/directory-tracking.log"
-
-# Navigate to project directory
-cd "$APP_DIR"
-
-# Log directory after navigation
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] Current directory after navigation: $(pwd)" >> "$LOG_DIR/directory-tracking.log"
-
-# Log directory contents
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] Directory contents:" >> "$LOG_DIR/directory-tracking.log"
-ls -la >> "$LOG_DIR/directory-tracking.log"
+# Function to ensure directories exist
+ensure_directories() {
+    # Create logs directory if it doesn't exist
+    if [ ! -d "$LOG_DIR" ]; then
+        mkdir -p "$LOG_DIR"
+        chmod 755 "$LOG_DIR"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Created logs directory" >> "$LOG_DIR/shutdown.log"
+    fi
+}
 
 # Function to log messages
 log() {
+    # Ensure log directory exists
+    mkdir -p "$LOG_DIR"
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> "$LOG_DIR/shutdown.log"
 }
 
@@ -89,6 +88,7 @@ stop_process() {
 }
 
 # Main execution
+ensure_directories
 log "Starting shutdown process..."
 
 # Stop the production server
