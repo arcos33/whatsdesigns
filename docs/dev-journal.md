@@ -127,6 +127,25 @@
   - Both development and production environments now have proper styling
   - The site now displays with appropriate Tailwind CSS styling
 
+## March 30, 2024 (Update 4)
+- Fixed visual differences between development and production environments:
+  - Identified the issue: In dev mode, the site wasn't rendering with dark mode
+  - Added environment-specific theme forcing in `globals.css`:
+    ```css
+    /* Force dark theme in development for easier theme testing */
+    html[data-mode="development"] {
+      --background: #0a0a0a;
+      --foreground: #ededed;
+    }
+    ```
+  - Modified `layout.tsx` to add data-mode attribute to html element:
+    ```tsx
+    <html lang="en" data-mode={env.environment}>
+    ```
+  - This ensures consistent styling across both environments
+  - Development and production now show identical dark UI styling
+  - Environment labels are correctly displayed in the appropriate positions
+
 ## March 29, 2024
 
 ### Environment Migration (Update)
