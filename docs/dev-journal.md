@@ -162,6 +162,24 @@
   - Current build version now consistent across environments
   - Both environments using the same CSS and component structure
 
+## March 30, 2024 (Update 6)
+- Fixed visual inconsistencies between development and production environments:
+  - Identified the root cause: Tailwind's conditional dark mode classes (`dark:bg-gray-900`) were being processed differently between environments
+  - Solution: Replaced conditional dark mode classes with explicit dark theme in src/app/page.tsx:
+    - Changed from using `bg-white dark:bg-gray-900` to simply `bg-gray-900 text-white`
+    - Removed all `dark:` prefixed classes and used their values directly
+    - Added explicit positioning for environment indicators (left for dev, right for prod)
+  - Result:
+    - Both environments now display identical dark theme styling
+    - Development server shows yellow "DEVELOPMENT" indicator on the left
+    - Production server shows green "PRODUCTION" indicator on the right
+    - Consistent visual experience across environments
+    - No reliance on CSS variables or media queries for dark mode
+  - This approach ensures visual parity regardless of:
+    - Different CSS processing methods between dev and prod
+    - Environmental CSS variables
+    - System preferences for dark/light mode
+
 ## March 29, 2024
 
 ### Environment Migration (Update)
