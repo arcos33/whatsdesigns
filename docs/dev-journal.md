@@ -604,5 +604,119 @@
     - Test domain accessibility
     - Monitor server logs for any domain-related issues
 
-## March 30, 2024 (Update 8)
-// ... existing code ... 
+## [2024-03-27] Nginx and SSL Setup for Local Development
+
+### Changes Made
+- Installed Certbot for SSL certificate management
+- Created Nginx configuration for whatsdesigns.com
+- Generated self-signed SSL certificates for local development
+- Set up Nginx to proxy requests to Next.js application
+- Configured SSL and security headers
+
+### Configuration Details
+- Nginx listens on ports 80 (HTTP) and 443 (HTTPS)
+- HTTP traffic automatically redirects to HTTPS
+- SSL certificates located in `/opt/homebrew/etc/nginx/ssl/whatsdesigns.com/`
+- Next.js application proxied from localhost:3002
+
+### Next Steps
+- Set up production SSL certificates when domain is pointed to production server
+- Configure automatic SSL certificate renewal
+- Monitor SSL certificate expiration
+- Implement rate limiting and additional security measures
+
+### Notes
+- Self-signed certificates are for development only
+- Browser security warnings are expected with self-signed certificates
+- Production deployment will require proper SSL certificates from Let's Encrypt 
+
+## [2024-03-30] Server Environment Configuration Update
+
+### Combined Production and Development Setup
+- Configured single machine to handle both production and development environments
+- Set up port forwarding (80/443) from external IP (66.219.222.78) to local machine
+- Successfully obtained Let's Encrypt SSL certificates for production
+- Configured Nginx for both environments with proper separation
+
+### Environment Details
+- Production:
+  - Domain: whatsdesigns.com
+  - Next.js Port: 3002
+  - SSL: Let's Encrypt certificates
+  - Status: Live and operational
+
+- Development:
+  - Domain: dev.whatsdesigns.com (local)
+  - Next.js Port: 3000
+  - SSL: Self-signed certificates
+  - Status: Local access only
+
+### Security Measures
+- Implemented automatic SSL certificate renewal
+- Added security headers in Nginx configuration
+- Set up proper file permissions for SSL certificates
+- Configured separate ports for production and development
+
+### Next Steps
+1. Implement monitoring for:
+   - Server resource usage
+   - SSL certificate expiration
+   - Application logs
+2. Set up automated backups
+3. Consider implementing containerization
+4. Add environment-specific configuration files
+
+### Notes
+- Both environments sharing resources requires careful monitoring
+- Development changes must be tested thoroughly before production deployment
+- Regular backups are crucial due to shared infrastructure
+- Consider future separation of environments if resource constraints become an issue 
+
+## [2024-03-30] SSL Certificate Auto-Renewal Configuration
+
+### SSL Certificate Auto-Renewal Setup
+- Configured automatic SSL certificate renewal for whatsdesigns.com
+- Set up pre and post-renewal hooks for Nginx management
+- Added monthly crontab job for certificate renewal
+- Implemented certificate backup system
+- Added monitoring and troubleshooting procedures
+
+### Configuration Details
+1. **Renewal Hooks**
+   - Created pre-renewal hook to stop Nginx
+   - Created post-renewal hook to restart Nginx
+   - Set proper permissions for hook scripts
+   - Verified hook functionality
+
+2. **Crontab Setup**
+   - Added monthly renewal job (1st day at midnight)
+   - Configured quiet mode to reduce log noise
+   - Verified crontab entry
+
+3. **Backup System**
+   - Created backup directory structure
+   - Set up automatic certificate backup
+   - Implemented backup verification
+
+4. **Monitoring**
+   - Added certificate status checking
+   - Set up expiration monitoring
+   - Configured log monitoring
+
+### Security Measures
+- Implemented proper file permissions
+- Added security headers in Nginx
+- Set up certificate backup system
+- Configured monitoring alerts
+
+### Next Steps
+1. Monitor first auto-renewal cycle
+2. Set up monitoring alerts
+3. Implement log rotation
+4. Add automated testing
+
+### Notes
+- Certificates will auto-renew monthly
+- Nginx will restart during renewal
+- Backups created before renewal
+- Monitor logs for any issues 

@@ -1177,204 +1177,990 @@ Always maintain:
 5. System logs
 6. Recovery documentation
 
+## Server Environment Setup
+
+### Combined Production and Development Environment
+
+This project uses a unique setup where both production and development environments run on the same machine. This approach requires special consideration for:
+- Port management
+- SSL certificate handling
+- Domain configuration
+- Environment separation
+
+#### Environment Details
+- Production Domain: whatsdesigns.com
+- Development Domain: dev.whatsdesigns.com (local)
+- External IP: 66.219.222.78 (port forwarded)
+- Internal IP: 192.168.1.26
+
+### Port Forwarding Configuration
+
+1. Router Setup:
+   - Forward port 80 to 192.168.1.26:80
+   - Forward port 443 to 192.168.1.26:443
+   - Ensure firewall allows these ports
+
+2. Local Network Access:
+   ```bash
+   # Add to /etc/hosts for local development
+   127.0.0.1 dev.whatsdesigns.com
+   ```
+
 ## Nginx and SSL Configuration
 
 ### Prerequisites
 - Nginx installed via Homebrew
 - Certbot installed for SSL certificate management
-- Domain pointing to your server (for production)
+- Port forwarding configured (80 and 443)
 - Root access for SSL certificate management
 
 ### Installation Steps
 
-1. Install Nginx:
+1. Install Required Software:
    ```bash
+   # Install Nginx
    brew install nginx
-   ```
 
-2. Install Certbot:
-   ```bash
+   # Install Certbot
    brew install certbot
    ```
 
-3. Create required directories:
+2. Create Required Directories:
    ```bash
+   # Create Nginx configuration directories
    sudo mkdir -p /opt/homebrew/etc/nginx/servers
    sudo mkdir -p /opt/homebrew/etc/nginx/ssl/whatsdesigns.com
    ```
 
-4. Create Nginx configuration:
+3. Configure Nginx:
+   ```bash
+   # Main configuration
+   sudo nano /opt/homebrew/etc/nginx/nginx.conf
+   ```
+   Add:
+   ```nginx
+   worker_processes 1;
+   events {
+       worker_connections 1024;
+   }
+   http {
+       include mime.types;
+       default_type application/octet-stream;
+       sendfile on;
+       keepalive_timeout 65;
+       include servers/*;
+   }
+   ```
+
+4. Create Site Configuration:
    ```bash
    sudo nano /opt/homebrew/etc/nginx/servers/whatsdesigns.conf
    ```
-
-5. Add the following configuration:
+   Add:
    ```nginx
-   # HTTP Server (Redirect to HTTPS)
+   # Production Server
    server {
        listen 80;
        server_name whatsdesigns.com www.whatsdesigns.com;
        return 301 https://$server_name$request_uri;
    }
 
-   # HTTPS Server
    server {
-       listen 443 ssl http2;
+       listen 443 ssl;
+       http2 on;
        server_name whatsdesigns.com www.whatsdesigns.com;
 
-       # SSL Configuration
-       ssl_certificate /opt/homebrew/etc/nginx/ssl/whatsdesigns.com/fullchain.pem;
-       ssl_certificate_key /opt/homebrew/etc/nginx/ssl/whatsdesigns.com/privkey.pem;
-       ssl_session_timeout 1d;
-       ssl_session_cache shared:SSL:50m;
-       ssl_session_tickets off;
+       ssl_certificate /etc/letsencrypt/live/whatsdesigns.com/fullchain.pem;
+       ssl_certificate_key /etc/letsencrypt/live/whatsdesigns.com/privkey.pem;
 
-       # Modern SSL configuration
-       ssl_protocols TLSv1.2 TLSv1.3;
-       ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
-       ssl_prefer_server_ciphers off;
+       # Security headers
+       add_header Strict-Transport-Security "max-age=31536000" always;
+       add_header X-Frame-Options SAMEORIGIN;
+       add_header X-Content-Type-Options nosniff;
 
-       # HSTS (uncomment if you're sure)
-       # add_header Strict-Transport-Security "max-age=63072000" always;
-
-       # Proxy to Next.js application
        location / {
            proxy_pass http://localhost:3002;
            proxy_http_version 1.1;
            proxy_set_header Upgrade $http_upgrade;
-           proxy_set_header Connection 'upgrade';
+           proxy_set_header Connection "upgrade";
            proxy_set_header Host $host;
            proxy_cache_bypass $http_upgrade;
-           proxy_set_header X-Real-IP $remote_addr;
-           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-           proxy_set_header X-Forwarded-Proto $scheme;
+       }
+   }
+
+   # Development Server (Optional)
+   server {
+       listen 80;
+       server_name dev.whatsdesigns.com;
+       return 301 https://$server_name$request_uri;
+   }
+
+   server {
+       listen 443 ssl;
+       http2 on;
+       server_name dev.whatsdesigns.com;
+
+       ssl_certificate /opt/homebrew/etc/nginx/ssl/whatsdesigns.com/fullchain.pem;
+       ssl_certificate_key /opt/homebrew/etc/nginx/ssl/whatsdesigns.com/privkey.pem;
+
+       location / {
+           proxy_pass http://localhost:3000;
+           proxy_http_version 1.1;
+           proxy_set_header Upgrade $http_upgrade;
+           proxy_set_header Connection "upgrade";
+           proxy_set_header Host $host;
+           proxy_cache_bypass $http_upgrade;
        }
    }
    ```
 
 ### SSL Certificate Setup
 
-#### For Local Development
-1. Generate self-signed certificate:
-   ```bash
-   sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-     -keyout /opt/homebrew/etc/nginx/ssl/whatsdesigns.com/privkey.pem \
-     -out /opt/homebrew/etc/nginx/ssl/whatsdesigns.com/fullchain.pem \
-     -subj "/CN=whatsdesigns.com"
-   ```
-
-2. Add to hosts file:
-   ```bash
-   sudo nano /etc/hosts
-   ```
-   Add:
-   ```
-   127.0.0.1 whatsdesigns.com www.whatsdesigns.com
-   ```
-
-#### For Production
+#### Production Certificates (Let's Encrypt)
 1. Stop Nginx:
    ```bash
-   brew services stop nginx
+   sudo nginx -s stop
    ```
 
-2. Obtain SSL certificate:
+2. Obtain Certificate:
    ```bash
    sudo certbot certonly --standalone -d whatsdesigns.com -d www.whatsdesigns.com
    ```
 
-3. Start Nginx:
+3. Set Up Auto-Renewal:
    ```bash
-   brew services start nginx
-   ```
+   # Create renewal hooks
+   sudo mkdir -p /etc/letsencrypt/renewal-hooks/{pre,post}
 
-4. Set up automatic renewal:
-   ```bash
-   sudo certbot renew --dry-run
-   ```
+   # Create pre-renewal hook
+   sudo tee /etc/letsencrypt/renewal-hooks/pre/stop-nginx.sh << 'EOF'
+   #!/bin/sh
+   sudo nginx -s stop
+   EOF
+   sudo chmod +x /etc/letsencrypt/renewal-hooks/pre/stop-nginx.sh
 
-5. Add to crontab:
-   ```bash
+   # Create post-renewal hook
+   sudo tee /etc/letsencrypt/renewal-hooks/post/start-nginx.sh << 'EOF'
+   #!/bin/sh
+   sudo nginx
+   EOF
+   sudo chmod +x /etc/letsencrypt/renewal-hooks/post/start-nginx.sh
+
+   # Add to crontab
    (crontab -l 2>/dev/null; echo "0 0 1 * * /usr/local/bin/certbot renew --quiet") | crontab -
    ```
 
-### Nginx Management
+#### Development Certificates (Self-signed)
+1. Generate Certificate:
+   ```bash
+   sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+     -keyout /opt/homebrew/etc/nginx/ssl/whatsdesigns.com/privkey.pem \
+     -out /opt/homebrew/etc/nginx/ssl/whatsdesigns.com/fullchain.pem \
+     -subj "/CN=dev.whatsdesigns.com"
+   ```
 
-1. Test configuration:
+### Managing the Environment
+
+1. Start/Stop Services:
+   ```bash
+   # Start Nginx
+   sudo nginx
+
+   # Stop Nginx
+   sudo nginx -s stop
+
+   # Reload configuration
+   sudo nginx -s reload
+   ```
+
+2. View Logs:
+   ```bash
+   # Access logs
+   tail -f /opt/homebrew/var/log/nginx/access.log
+
+   # Error logs
+   tail -f /opt/homebrew/var/log/nginx/error.log
+   ```
+
+3. Test Configuration:
    ```bash
    sudo nginx -t
    ```
 
-2. Start Nginx:
-   ```bash
-   brew services start nginx
-   ```
+### Environment-Specific Ports
 
-3. Stop Nginx:
-   ```bash
-   brew services stop nginx
-   ```
+- Production:
+  - Next.js: 3002
+  - HTTP: 80 → HTTPS redirect
+  - HTTPS: 443
 
-4. Restart Nginx:
-   ```bash
-   brew services restart nginx
-   ```
-
-5. View logs:
-   ```bash
-   tail -f /opt/homebrew/var/log/nginx/access.log
-   tail -f /opt/homebrew/var/log/nginx/error.log
-   ```
-
-### Troubleshooting
-
-1. Check Nginx status:
-   ```bash
-   brew services list | grep nginx
-   ```
-
-2. Verify ports:
-   ```bash
-   sudo lsof -i :80
-   sudo lsof -i :443
-   ```
-
-3. Test SSL:
-   ```bash
-   curl -vI https://whatsdesigns.com
-   ```
-
-4. Common issues:
-   - Port 80/443 already in use: Check for other web servers
-   - SSL certificate errors: Verify certificate paths and permissions
-   - 502 Bad Gateway: Check if Next.js server is running
-   - Connection refused: Verify firewall settings
+- Development:
+  - Next.js: 3000
+  - HTTP: 80 → HTTPS redirect
+  - HTTPS: 443
 
 ### Security Considerations
 
-1. Keep Nginx updated:
+1. SSL Certificate Management:
    ```bash
-   brew update && brew upgrade nginx
-   ```
-
-2. Monitor SSL certificates:
-   ```bash
+   # Check certificate status
    certbot certificates
+
+   # Monitor expiration
+   echo | openssl s_client -servername whatsdesigns.com \
+     -connect whatsdesigns.com:443 2>/dev/null | \
+     openssl x509 -noout -dates
    ```
 
-3. Check certificate expiration:
+2. Regular Updates:
    ```bash
-   echo | openssl s_client -servername whatsdesigns.com -connect whatsdesigns.com:443 2>/dev/null | openssl x509 -noout -dates
-   ```
-
-4. Regular security updates:
-   ```bash
+   # Update all components
    brew update && brew upgrade
    ```
 
+3. Access Control:
+   - Production and development environments share the same machine
+   - Use different ports for each environment
+   - Keep development environment local-only
+   - Use proper environment variables
+
+### Troubleshooting
+
+1. Certificate Issues:
+   ```bash
+   # Test SSL
+   curl -vI https://whatsdesigns.com
+   curl -vI https://dev.whatsdesigns.com
+   ```
+
+2. Port Conflicts:
+   ```bash
+   # Check port usage
+   sudo lsof -i :80
+   sudo lsof -i :443
+   sudo lsof -i :3000
+   sudo lsof -i :3002
+   ```
+
+3. Common Issues:
+   - Port forwarding not working: Check router configuration
+   - SSL certificate errors: Verify paths and permissions
+   - 502 Bad Gateway: Check if Next.js is running on correct port
+   - Connection refused: Check Nginx status and port availability
+
 ### Notes
-- Local development uses self-signed certificates
-- Production requires proper SSL certificates from Let's Encrypt
-- Browser security warnings are expected with self-signed certificates
-- Keep SSL certificates and private keys secure
-- Regular monitoring of SSL certificate expiration is recommended 
+- Keep production and development databases separate
+- Use environment variables to manage different configurations
+- Regular backups are crucial as both environments share the same machine
+- Monitor system resources as both environments run simultaneously
+- Consider containerization for better environment isolation in the future
+
+### SSL Certificate Auto-Renewal Setup
+
+1. **Configure Certbot Auto-Renewal**
+   ```bash
+   # Create renewal hooks directory
+   sudo mkdir -p /etc/letsencrypt/renewal-hooks/{pre,post}
+
+   # Create pre-renewal hook to stop Nginx
+   sudo tee /etc/letsencrypt/renewal-hooks/pre/stop-nginx.sh << 'EOF'
+   #!/bin/sh
+   sudo nginx -s stop
+   EOF
+   sudo chmod +x /etc/letsencrypt/renewal-hooks/pre/stop-nginx.sh
+
+   # Create post-renewal hook to start Nginx
+   sudo tee /etc/letsencrypt/renewal-hooks/post/start-nginx.sh << 'EOF'
+   #!/bin/sh
+   sudo nginx
+   EOF
+   sudo chmod +x /etc/letsencrypt/renewal-hooks/post/start-nginx.sh
+   ```
+
+2. **Set Up Crontab for Auto-Renewal**
+   ```bash
+   # Add to crontab to run at midnight on the first day of each month
+   (crontab -l 2>/dev/null; echo "0 0 1 * * /usr/local/bin/certbot renew --quiet") | crontab -
+   ```
+
+3. **Test Auto-Renewal**
+   ```bash
+   # Test the renewal process without making changes
+   sudo certbot renew --dry-run
+   ```
+
+4. **Monitor Certificate Status**
+   ```bash
+   # Check certificate expiration dates
+   echo | openssl s_client -servername whatsdesigns.com \
+     -connect whatsdesigns.com:443 2>/dev/null | \
+     openssl x509 -noout -dates
+
+   # View all certificates managed by Certbot
+   sudo certbot certificates
+   ```
+
+5. **Backup SSL Certificates**
+   ```bash
+   # Create backup directory
+   sudo mkdir -p /etc/letsencrypt/backup
+
+   # Backup certificates (run before renewal)
+   sudo cp -r /etc/letsencrypt/live/whatsdesigns.com /etc/letsencrypt/backup/
+   sudo cp -r /etc/letsencrypt/archive/whatsdesigns.com /etc/letsencrypt/backup/
+   ```
+
+6. **Troubleshooting Auto-Renewal**
+   ```bash
+   # Check Certbot logs
+   sudo tail -f /var/log/letsencrypt/letsencrypt.log
+
+   # Check renewal configuration
+   sudo certbot renew --dry-run --debug
+
+   # Force renewal if needed
+   sudo certbot renew --force-renewal
+   ```
+
+7. **Security Considerations**
+   - Keep backup of SSL certificates
+   - Monitor certificate expiration
+   - Set up alerts for failed renewals
+   - Maintain proper file permissions
+   - Regular security audits
+
+8. **Best Practices**
+   - Test renewal process monthly
+   - Keep Certbot updated
+   - Monitor server logs for SSL issues
+   - Maintain backup of certificates
+   - Document renewal process
+
+## Server Environment Setup
+
+### Combined Production and Development Environment
+
+This project uses a unique setup where both production and development environments run on the same machine. This approach requires special consideration for:
+
+#### Environment Details
+- Production Domain: whatsdesigns.com
+- Development Domain: dev.whatsdesigns.com (local)
+- External IP: 66.219.222.78 (port forwarded)
+- Internal IP: 192.168.1.26
+
+### Port Forwarding Configuration
+
+1. Router Setup:
+   - Forward port 80 to 192.168.1.26:80
+   - Forward port 443 to 192.168.1.26:443
+   - Ensure firewall allows these ports
+
+2. Local Network Access:
+   ```bash
+   # Add to /etc/hosts for local development
+   127.0.0.1 dev.whatsdesigns.com
+   ```
+
+## Nginx and SSL Configuration
+
+### Prerequisites
+- Nginx installed via Homebrew
+- Certbot installed for SSL certificate management
+- Port forwarding configured (80 and 443)
+- Root access for SSL certificate management
+
+### Installation Steps
+
+1. Install Required Software:
+   ```bash
+   # Install Nginx
+   brew install nginx
+
+   # Install Certbot
+   brew install certbot
+   ```
+
+2. Create Required Directories:
+   ```bash
+   # Create Nginx configuration directories
+   sudo mkdir -p /opt/homebrew/etc/nginx/servers
+   sudo mkdir -p /opt/homebrew/etc/nginx/ssl/whatsdesigns.com
+   ```
+
+3. Configure Nginx:
+   ```bash
+   # Main configuration
+   sudo nano /opt/homebrew/etc/nginx/nginx.conf
+   ```
+   Add:
+   ```nginx
+   worker_processes 1;
+   events {
+       worker_connections 1024;
+   }
+   http {
+       include mime.types;
+       default_type application/octet-stream;
+       sendfile on;
+       keepalive_timeout 65;
+       include servers/*;
+   }
+   ```
+
+4. Create Site Configuration:
+   ```bash
+   sudo nano /opt/homebrew/etc/nginx/servers/whatsdesigns.conf
+   ```
+   Add:
+   ```nginx
+   # Production Server
+   server {
+       listen 80;
+       server_name whatsdesigns.com www.whatsdesigns.com;
+       return 301 https://$server_name$request_uri;
+   }
+
+   server {
+       listen 443 ssl;
+       http2 on;
+       server_name whatsdesigns.com www.whatsdesigns.com;
+
+       ssl_certificate /etc/letsencrypt/live/whatsdesigns.com/fullchain.pem;
+       ssl_certificate_key /etc/letsencrypt/live/whatsdesigns.com/privkey.pem;
+
+       # Security headers
+       add_header Strict-Transport-Security "max-age=31536000" always;
+       add_header X-Frame-Options SAMEORIGIN;
+       add_header X-Content-Type-Options nosniff;
+
+       location / {
+           proxy_pass http://localhost:3002;
+           proxy_http_version 1.1;
+           proxy_set_header Upgrade $http_upgrade;
+           proxy_set_header Connection "upgrade";
+           proxy_set_header Host $host;
+           proxy_cache_bypass $http_upgrade;
+       }
+   }
+
+   # Development Server (Optional)
+   server {
+       listen 80;
+       server_name dev.whatsdesigns.com;
+       return 301 https://$server_name$request_uri;
+   }
+
+   server {
+       listen 443 ssl;
+       http2 on;
+       server_name dev.whatsdesigns.com;
+
+       ssl_certificate /opt/homebrew/etc/nginx/ssl/whatsdesigns.com/fullchain.pem;
+       ssl_certificate_key /opt/homebrew/etc/nginx/ssl/whatsdesigns.com/privkey.pem;
+
+       location / {
+           proxy_pass http://localhost:3000;
+           proxy_http_version 1.1;
+           proxy_set_header Upgrade $http_upgrade;
+           proxy_set_header Connection "upgrade";
+           proxy_set_header Host $host;
+           proxy_cache_bypass $http_upgrade;
+       }
+   }
+   ```
+
+### SSL Certificate Setup
+
+#### Production Certificates (Let's Encrypt)
+1. Stop Nginx:
+   ```bash
+   sudo nginx -s stop
+   ```
+
+2. Obtain Certificate:
+   ```bash
+   sudo certbot certonly --standalone -d whatsdesigns.com -d www.whatsdesigns.com
+   ```
+
+3. Set Up Auto-Renewal:
+   ```bash
+   # Create renewal hooks
+   sudo mkdir -p /etc/letsencrypt/renewal-hooks/{pre,post}
+
+   # Create pre-renewal hook
+   sudo tee /etc/letsencrypt/renewal-hooks/pre/stop-nginx.sh << 'EOF'
+   #!/bin/sh
+   sudo nginx -s stop
+   EOF
+   sudo chmod +x /etc/letsencrypt/renewal-hooks/pre/stop-nginx.sh
+
+   # Create post-renewal hook
+   sudo tee /etc/letsencrypt/renewal-hooks/post/start-nginx.sh << 'EOF'
+   #!/bin/sh
+   sudo nginx
+   EOF
+   sudo chmod +x /etc/letsencrypt/renewal-hooks/post/start-nginx.sh
+
+   # Add to crontab
+   (crontab -l 2>/dev/null; echo "0 0 1 * * /usr/local/bin/certbot renew --quiet") | crontab -
+   ```
+
+#### Development Certificates (Self-signed)
+1. Generate Certificate:
+   ```bash
+   sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+     -keyout /opt/homebrew/etc/nginx/ssl/whatsdesigns.com/privkey.pem \
+     -out /opt/homebrew/etc/nginx/ssl/whatsdesigns.com/fullchain.pem \
+     -subj "/CN=dev.whatsdesigns.com"
+   ```
+
+### Managing the Environment
+
+1. Start/Stop Services:
+   ```bash
+   # Start Nginx
+   sudo nginx
+
+   # Stop Nginx
+   sudo nginx -s stop
+
+   # Reload configuration
+   sudo nginx -s reload
+   ```
+
+2. View Logs:
+   ```bash
+   # Access logs
+   tail -f /opt/homebrew/var/log/nginx/access.log
+
+   # Error logs
+   tail -f /opt/homebrew/var/log/nginx/error.log
+   ```
+
+3. Test Configuration:
+   ```bash
+   sudo nginx -t
+   ```
+
+### Environment-Specific Ports
+
+- Production:
+  - Next.js: 3002
+  - HTTP: 80 → HTTPS redirect
+  - HTTPS: 443
+
+- Development:
+  - Next.js: 3000
+  - HTTP: 80 → HTTPS redirect
+  - HTTPS: 443
+
+### Security Considerations
+
+1. SSL Certificate Management:
+   ```bash
+   # Check certificate status
+   certbot certificates
+
+   # Monitor expiration
+   echo | openssl s_client -servername whatsdesigns.com \
+     -connect whatsdesigns.com:443 2>/dev/null | \
+     openssl x509 -noout -dates
+   ```
+
+2. Regular Updates:
+   ```bash
+   # Update all components
+   brew update && brew upgrade
+   ```
+
+3. Access Control:
+   - Production and development environments share the same machine
+   - Use different ports for each environment
+   - Keep development environment local-only
+   - Use proper environment variables
+
+### Troubleshooting
+
+1. Certificate Issues:
+   ```bash
+   # Test SSL
+   curl -vI https://whatsdesigns.com
+   curl -vI https://dev.whatsdesigns.com
+   ```
+
+2. Port Conflicts:
+   ```bash
+   # Check port usage
+   sudo lsof -i :80
+   sudo lsof -i :443
+   sudo lsof -i :3000
+   sudo lsof -i :3002
+   ```
+
+3. Common Issues:
+   - Port forwarding not working: Check router configuration
+   - SSL certificate errors: Verify paths and permissions
+   - 502 Bad Gateway: Check if Next.js is running on correct port
+   - Connection refused: Check Nginx status and port availability
+
+### Notes
+- Keep production and development databases separate
+- Use environment variables to manage different configurations
+- Regular backups are crucial as both environments share the same machine
+- Monitor system resources as both environments run simultaneously
+- Consider containerization for better environment isolation in the future
+
+### SSL Certificate Auto-Renewal Setup
+
+1. **Configure Certbot Auto-Renewal**
+   ```bash
+   # Create renewal hooks directory
+   sudo mkdir -p /etc/letsencrypt/renewal-hooks/{pre,post}
+
+   # Create pre-renewal hook to stop Nginx
+   sudo tee /etc/letsencrypt/renewal-hooks/pre/stop-nginx.sh << 'EOF'
+   #!/bin/sh
+   sudo nginx -s stop
+   EOF
+   sudo chmod +x /etc/letsencrypt/renewal-hooks/pre/stop-nginx.sh
+
+   # Create post-renewal hook to start Nginx
+   sudo tee /etc/letsencrypt/renewal-hooks/post/start-nginx.sh << 'EOF'
+   #!/bin/sh
+   sudo nginx
+   EOF
+   sudo chmod +x /etc/letsencrypt/renewal-hooks/post/start-nginx.sh
+   ```
+
+2. **Set Up Crontab for Auto-Renewal**
+   ```bash
+   # Add to crontab to run at midnight on the first day of each month
+   (crontab -l 2>/dev/null; echo "0 0 1 * * /usr/local/bin/certbot renew --quiet") | crontab -
+   ```
+
+3. **Test Auto-Renewal**
+   ```bash
+   # Test the renewal process without making changes
+   sudo certbot renew --dry-run
+   ```
+
+4. **Monitor Certificate Status**
+   ```bash
+   # Check certificate expiration dates
+   echo | openssl s_client -servername whatsdesigns.com \
+     -connect whatsdesigns.com:443 2>/dev/null | \
+     openssl x509 -noout -dates
+
+   # View all certificates managed by Certbot
+   sudo certbot certificates
+   ```
+
+5. **Backup SSL Certificates**
+   ```bash
+   # Create backup directory
+   sudo mkdir -p /etc/letsencrypt/backup
+
+   # Backup certificates (run before renewal)
+   sudo cp -r /etc/letsencrypt/live/whatsdesigns.com /etc/letsencrypt/backup/
+   sudo cp -r /etc/letsencrypt/archive/whatsdesigns.com /etc/letsencrypt/backup/
+   ```
+
+6. **Troubleshooting Auto-Renewal**
+   ```bash
+   # Check Certbot logs
+   sudo tail -f /var/log/letsencrypt/letsencrypt.log
+
+   # Check renewal configuration
+   sudo certbot renew --dry-run --debug
+
+   # Force renewal if needed
+   sudo certbot renew --force-renewal
+   ```
+
+7. **Security Considerations**
+   - Keep backup of SSL certificates
+   - Monitor certificate expiration
+   - Set up alerts for failed renewals
+   - Maintain proper file permissions
+   - Regular security audits
+
+8. **Best Practices**
+   - Test renewal process monthly
+   - Keep Certbot updated
+   - Monitor server logs for SSL issues
+   - Maintain backup of certificates
+   - Document renewal process
+
+## Server Environment Setup
+
+### Combined Production and Development Environment
+
+This project uses a unique setup where both production and development environments run on the same machine. This approach requires special consideration for:
+
+#### Environment Details
+- Production Domain: whatsdesigns.com
+- Development Domain: dev.whatsdesigns.com (local)
+- External IP: 66.219.222.78 (port forwarded)
+- Internal IP: 192.168.1.26
+
+### Port Forwarding Configuration
+
+1. Router Setup:
+   - Forward port 80 to 192.168.1.26:80
+   - Forward port 443 to 192.168.1.26:443
+   - Ensure firewall allows these ports
+
+2. Local Network Access:
+   ```bash
+   # Add to /etc/hosts for local development
+   127.0.0.1 dev.whatsdesigns.com
+   ```
+
+## Nginx and SSL Configuration
+
+### Prerequisites
+- Nginx installed via Homebrew
+- Certbot installed for SSL certificate management
+- Port forwarding configured (80 and 443)
+- Root access for SSL certificate management
+
+### Installation Steps
+
+1. Install Required Software:
+   ```bash
+   # Install Nginx
+   brew install nginx
+
+   # Install Certbot
+   brew install certbot
+   ```
+
+2. Create Required Directories:
+   ```bash
+   # Create Nginx configuration directories
+   sudo mkdir -p /opt/homebrew/etc/nginx/servers
+   sudo mkdir -p /opt/homebrew/etc/nginx/ssl/whatsdesigns.com
+   ```
+
+3. Configure Nginx:
+   ```bash
+   # Main configuration
+   sudo nano /opt/homebrew/etc/nginx/nginx.conf
+   ```
+   Add:
+   ```nginx
+   worker_processes 1;
+   events {
+       worker_connections 1024;
+   }
+   http {
+       include mime.types;
+       default_type application/octet-stream;
+       sendfile on;
+       keepalive_timeout 65;
+       include servers/*;
+   }
+   ```
+
+4. Create Site Configuration:
+   ```bash
+   sudo nano /opt/homebrew/etc/nginx/servers/whatsdesigns.conf
+   ```
+   Add:
+   ```nginx
+   # Production Server
+   server {
+       listen 80;
+       server_name whatsdesigns.com www.whatsdesigns.com;
+       return 301 https://$server_name$request_uri;
+   }
+
+   server {
+       listen 443 ssl;
+       http2 on;
+       server_name whatsdesigns.com www.whatsdesigns.com;
+
+       ssl_certificate /etc/letsencrypt/live/whatsdesigns.com/fullchain.pem;
+       ssl_certificate_key /etc/letsencrypt/live/whatsdesigns.com/privkey.pem;
+
+       # Security headers
+       add_header Strict-Transport-Security "max-age=31536000" always;
+       add_header X-Frame-Options SAMEORIGIN;
+       add_header X-Content-Type-Options nosniff;
+
+       location / {
+           proxy_pass http://localhost:3002;
+           proxy_http_version 1.1;
+           proxy_set_header Upgrade $http_upgrade;
+           proxy_set_header Connection "upgrade";
+           proxy_set_header Host $host;
+           proxy_cache_bypass $http_upgrade;
+       }
+   }
+
+   # Development Server (Optional)
+   server {
+       listen 80;
+       server_name dev.whatsdesigns.com;
+       return 301 https://$server_name$request_uri;
+   }
+
+   server {
+       listen 443 ssl;
+       http2 on;
+       server_name dev.whatsdesigns.com;
+
+       ssl_certificate /opt/homebrew/etc/nginx/ssl/whatsdesigns.com/fullchain.pem;
+       ssl_certificate_key /opt/homebrew/etc/nginx/ssl/whatsdesigns.com/privkey.pem;
+
+       location / {
+           proxy_pass http://localhost:3000;
+           proxy_http_version 1.1;
+           proxy_set_header Upgrade $http_upgrade;
+           proxy_set_header Connection "upgrade";
+           proxy_set_header Host $host;
+           proxy_cache_bypass $http_upgrade;
+       }
+   }
+   ```
+
+### SSL Certificate Setup
+
+#### Production Certificates (Let's Encrypt)
+1. Stop Nginx:
+   ```bash
+   sudo nginx -s stop
+   ```
+
+2. Obtain Certificate:
+   ```bash
+   sudo certbot certonly --standalone -d whatsdesigns.com -d www.whatsdesigns.com
+   ```
+
+3. Set Up Auto-Renewal:
+   ```bash
+   # Create renewal hooks
+   sudo mkdir -p /etc/letsencrypt/renewal-hooks/{pre,post}
+
+   # Create pre-renewal hook
+   sudo tee /etc/letsencrypt/renewal-hooks/pre/stop-nginx.sh << 'EOF'
+   #!/bin/sh
+   sudo nginx -s stop
+   EOF
+   sudo chmod +x /etc/letsencrypt/renewal-hooks/pre/stop-nginx.sh
+
+   # Create post-renewal hook
+   sudo tee /etc/letsencrypt/renewal-hooks/post/start-nginx.sh << 'EOF'
+   #!/bin/sh
+   sudo nginx
+   EOF
+   sudo chmod +x /etc/letsencrypt/renewal-hooks/post/start-nginx.sh
+
+   # Add to crontab
+   (crontab -l 2>/dev/null; echo "0 0 1 * * /usr/local/bin/certbot renew --quiet") | crontab -
+   ```
+
+#### Development Certificates (Self-signed)
+1. Generate Certificate:
+   ```bash
+   sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+     -keyout /opt/homebrew/etc/nginx/ssl/whatsdesigns.com/privkey.pem \
+     -out /opt/homebrew/etc/nginx/ssl/whatsdesigns.com/fullchain.pem \
+     -subj "/CN=dev.whatsdesigns.com"
+   ```
+
+### Managing the Environment
+
+1. Start/Stop Services:
+   ```bash
+   # Start Nginx
+   sudo nginx
+
+   # Stop Nginx
+   sudo nginx -s stop
+
+   # Reload configuration
+   sudo nginx -s reload
+   ```
+
+2. View Logs:
+   ```bash
+   # Access logs
+   tail -f /opt/homebrew/var/log/nginx/access.log
+
+   # Error logs
+   tail -f /opt/homebrew/var/log/nginx/error.log
+   ```
+
+3. Test Configuration:
+   ```bash
+   sudo nginx -t
+   ```
+
+### Environment-Specific Ports
+
+- Production:
+  - Next.js: 3002
+  - HTTP: 80 → HTTPS redirect
+  - HTTPS: 443
+
+- Development:
+  - Next.js: 3000
+  - HTTP: 80 → HTTPS redirect
+  - HTTPS: 443
+
+### Security Considerations
+
+1. SSL Certificate Management:
+   ```bash
+   # Check certificate status
+   certbot certificates
+
+   # Monitor expiration
+   echo | openssl s_client -servername whatsdesigns.com \
+     -connect whatsdesigns.com:443 2>/dev/null | \
+     openssl x509 -noout -dates
+   ```
+
+2. Regular Updates:
+   ```bash
+   # Update all components
+   brew update && brew upgrade
+   ```
+
+3. Access Control:
+   - Production and development environments share the same machine
+   - Use different ports for each environment
+   - Keep development environment local-only
+   - Use proper environment variables
+
+### Troubleshooting
+
+1. Certificate Issues:
+   ```bash
+   # Test SSL
+   curl -vI https://whatsdesigns.com
+   curl -vI https://dev.whatsdesigns.com
+   ```
+
+2. Port Conflicts:
+   ```bash
+   # Check port usage
+   sudo lsof -i :80
+   sudo lsof -i :443
+   sudo lsof -i :3000
+   sudo lsof -i :3002
+   ```
+
+3. Common Issues:
+   - Port forwarding not working: Check router configuration
+   - SSL certificate errors: Verify paths and permissions
+   - 502 Bad Gateway: Check if Next.js is running on correct port
+   - Connection refused: Check Nginx status and port availability
+
+### Notes
+- Keep production and development databases separate
+- Use environment variables to manage different configurations
+- Regular backups are crucial as both environments share the same machine
+- Monitor system resources as both environments run simultaneously
+- Consider containerization for better environment isolation in the future 
