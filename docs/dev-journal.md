@@ -105,6 +105,28 @@
   - Both development server (port 3000) and production server (port 3002) now working correctly
   - Servers returning 200 OK responses with proper styling
 
+## March 30, 2024 (Update 2)
+- Fixed environment label display issue:
+  - Both development and production servers were showing "Production" in the environment label
+  - Updated `src/utils/env.ts` to use NODE_ENV as default for the environment property
+  - Development server now correctly shows "Development" mode
+  - Production server correctly shows "Production" mode
+  - Ensures accurate environment display for troubleshooting and development
+
+## March 30, 2024 (Update 3)
+- Fixed CSS styling issues in development environment:
+  - Identified incorrect Tailwind CSS import directive in `src/app/globals.css`
+  - Changed from `@import "tailwindcss";` to the proper directives:
+    ```css
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+    ```
+  - Restarted development server to clear cache
+  - Confirmed CSS is now loading properly with HTTP 200 for CSS files
+  - Both development and production environments now have proper styling
+  - The site now displays with appropriate Tailwind CSS styling
+
 ## March 29, 2024
 
 ### Environment Migration (Update)
