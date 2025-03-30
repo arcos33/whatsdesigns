@@ -178,50 +178,86 @@ with PostCSS you'll need to install `@tailwindcss/postcss` and update your PostC
 
 2. Install the correct packages:
    ```bash
-   npm install -D @tailwindcss/postcss autoprefixer postcss
-   npm install -D @tailwindcss/forms @tailwindcss/typography
+   npm install -D tailwindcss@3.3.0 postcss@8.4.23 autoprefixer@10.4.14
    ```
 
 3. Update your PostCSS configuration in `postcss.config.js`:
    ```javascript
    module.exports = {
      plugins: {
-       '@tailwindcss/postcss': {},
-       autoprefixer: {},
+       'tailwindcss': {},
+       'autoprefixer': {},
      },
    };
    ```
 
-4. If you're still having issues, try these specific versions which are known to work with Next.js 15.2.4:
-   ```bash
-   npm install -D tailwindcss@3.3.0 postcss@8.4.23 autoprefixer@10.4.14
+4. Make sure your `tailwind.config.js` looks like this:
+   ```javascript
+   /** @type {import('tailwindcss').Config} */
+   module.exports = {
+     content: [
+       './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+       './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+       './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+     ],
+     theme: {
+       extend: {
+         // Your theme extensions here
+       },
+     },
+     plugins: [],
+   };
    ```
 
-### Port Conflicts
+5. If you still encounter issues, ensure your `globals.css` file includes the proper Tailwind directives:
+   ```css
+   @tailwind base;
+   @tailwind components;
+   @tailwind utilities;
+   ```
 
-If you see this error when starting the development server:
+### Visual Consistency Between Development and Production
 
-```
-Error: listen EADDRINUSE: address already in use :::3000
-```
+If you notice visual differences between development and production environments (like different theme/styling), it could be due to:
+
+1. Different CSS processing:
+   - Development uses JIT (Just-In-Time) compilation
+   - Production uses a pre-built, optimized CSS bundle
+
+2. Environment-specific rendering:
+   - Components that render differently based on NODE_ENV
+   - Conditional styling based on environment variables
 
 #### Solution:
 
-1. Find the process using port 3000:
-   ```bash
-   lsof -i :3000
+To ensure visual consistency:
+
+1. Avoid using environment variables for conditional styling in components
+2. For theme consistency, use explicit classes rather than conditional dark mode:
+   ```jsx
+   {/* Instead of this: */}
+   <div className="bg-white dark:bg-gray-900">
+
+   {/* Use this for consistent appearance: */}
+   <div className="bg-gray-900 text-white">
    ```
 
-2. Kill the process (replace PID with the actual process ID from the previous command):
+3. Rebuild the production version after any styling changes:
    ```bash
-   kill PID
+   npm run build:prod
    ```
 
-3. Alternatively, modify `package.json` to use a different port:
-   ```json
-   "scripts": {
-     "dev": "next dev -p 3001",
-   }
+4. Restart both development and production servers to ensure they use the latest code:
+   ```bash
+   # Kill running servers
+   kill $(lsof -t -i:3000)
+   kill $(lsof -t -i:3002)
+   
+   # Start development server
+   npm run dev
+   
+   # Start production server
+   npm run start:prod
    ```
 
 ### Environment Module Import Errors
@@ -237,143 +273,80 @@ Type error: Module '"./env"' has no exported member 'isDevelopment'.
 1. Make sure `src/utils/env.ts` exports all necessary values:
    ```typescript
    export const env = {
+     environment: process.env.NODE_ENV || 'development',
      isDevelopment: process.env.NODE_ENV === 'development',
      isProduction: process.env.NODE_ENV === 'production',
      apiUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api',
      siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-     // ... other environment variables
+     mongodbUri: process.env.MONGODB_URI || 'mongodb://localhost:27017/whatsdesigns',
+     nextAuthSecret: process.env.NEXTAUTH_SECRET || 'your-development-secret',
    };
    ```
 
 2. Update imports in other files to use the `env` object:
    ```typescript
    // Instead of
-   import { isDevelopment } from './env';
+   import { isDevelopment } from '@/utils/env';
    
-   // Use
-   import { env } from './env';
-   // and then
-   if (env.isDevelopment) { ... }
+   // Use this
+   import { env } from '@/utils/env';
+   // Then use env.isDevelopment
    ```
 
-### MongoDB Connection Issues
+3. Ensure your environment configuration files exist and have the required variables:
+   - `.env.development` - Development environment variables
+   - `.env.production` - Production environment variables
+   - `.env` - Fallback environment variables
 
-If you encounter MongoDB connection errors:
+### Next.js Build Issues
+
+If you encounter issues during the build process:
 
 #### Solution:
 
-1. Make sure MongoDB is running:
+1. Check for TypeScript errors:
    ```bash
-   brew services list | grep mongodb
+   npm run type-check
    ```
 
-2. Start MongoDB if it's not running:
-   ```bash
-   brew services start mongodb-community
-   ```
-
-3. Verify connectivity:
-   ```bash
-   mongosh --eval "db.runCommand({ping: 1})"
-   ```
-
-4. Check your MongoDB connection string in `.env`:
-   ```
-   MONGODB_URI=mongodb://localhost:27017/whatsdesigns
-   ```
-
-### Missing Environment Variables
-
-If you encounter errors about missing environment variables:
-
-#### Solution:
-
-1. Ensure you have the correct `.env` file:
-   ```bash
-   # For development
-   cp .env.example .env
-   
-   # For production
-   cp .env.example .env.production
-   ```
-
-2. Set the required environment variables in your `.env` file:
-   ```
-   # Application URLs
-   NEXT_PUBLIC_API_URL=http://localhost:3000/api
-   NEXT_PUBLIC_SITE_URL=http://localhost:3000
-   
-   # Authentication
-   NEXTAUTH_URL=http://localhost:3000
-   NEXTAUTH_SECRET=your-secret-key-here
-   
-   # OpenAI Configuration
-   OPENAI_API_KEY=your-openai-api-key
-   
-   # MongoDB Configuration
-   MONGODB_URI=mongodb://localhost:27017/whatsdesigns
-   
-   # Environment
-   NODE_ENV=development
-   ```
-
-### Production Build Failures
-
-If your production build fails:
-
-#### Solution:
-
-1. Check if `.next` directory exists and remove it:
+2. Clear Next.js cache:
    ```bash
    rm -rf .next
    ```
 
-2. Ensure you have the correct environment variables set in `.env.production`:
+3. Update Next.js dependencies:
    ```bash
-   cp .env.example .env.production
+   npm update next react react-dom
    ```
 
-3. Try a clean install of dependencies:
-   ```bash
-   rm -rf node_modules
-   npm cache clean --force
-   npm install
-   ```
-
-4. Build the production version:
+4. Rebuild the application:
    ```bash
    npm run build:prod
    ```
 
-5. Start the production server:
+### Git Best Practices
+
+To maintain code consistency across environments:
+
+1. Always commit and push changes after significant updates:
    ```bash
-   npm run start:prod
+   git add .
+   git commit -m "Meaningful commit message"
+   git push
    ```
 
-### Type Errors After Cloning
-
-If you encounter TypeScript errors after cloning:
-
-#### Solution:
-
-1. Update your TypeScript configuration in `tsconfig.json` to include path aliases:
-   ```json
-   {
-     "compilerOptions": {
-       // ... other options
-       "baseUrl": ".",
-       "paths": {
-         "@/*": ["src/*"]
-       }
-     }
-   }
-   ```
-
-2. Regenerate the `.next` folder and TypeScript definitions:
+2. Pull latest changes before starting development:
    ```bash
-   npx prisma generate
-   npm run dev
+   git pull
    ```
+
+3. Rebuild after pulling changes:
+   ```bash
+   npm install  # If dependencies changed
+   npm run build:prod
+   ```
+
+4. Update documentation when making significant changes
 
 ## Additional Resources
 - [Next.js Documentation](https://nextjs.org/docs)

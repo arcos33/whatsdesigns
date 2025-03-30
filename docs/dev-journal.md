@@ -190,6 +190,8 @@
   - Memory: 32 GB
   - System: macOS 15.4 (24E246)
   - System Firmware: 11881.101.1
+  - Hardware UUID: 05D8F2EF-A6BC-537B-B047-1E6C8AB7AE47
+  - Model Number: Z14V0016ELL/A
 - Successfully cloned project from GitHub repository
 - Set up development environment:
   - Installed NVM and Node.js v20.19.0 (LTS: Iron)
