@@ -91,98 +91,6 @@ stop_process() {
     fi
 }
 
-# Function to check if server is already running
-check_server() {
-    # Check main PID file
-    if is_process_running "$PID_FILE"; then
-        local pid=$(cat "$PID_FILE")
-        log "${YELLOW}Development server is already running with PID: $pid${NC}"
-        notify "WhatsDesigns Development server is already running on port 3000"
-        exit 1
-    fi
-    
-    # Check Next.js PID file
-    if is_process_running "$NEXT_PID_FILE"; then
-        local pid=$(cat "$NEXT_PID_FILE")
-        log "${YELLOW}Found stale Next.js process with PID: $pid${NC}"
-        stop_process "$NEXT_PID_FILE" "Next.js process"
-    fi
-    
-    # Check for any processes on port 3000
-    if lsof -i :3000 > /dev/null 2>&1; then
-        local pid=$(lsof -t -i :3000)
-        log "${YELLOW}Found process running on port 3000 (PID: $pid)${NC}"
-        kill "$pid"
-        sleep 2
-    fi
-}
-
-# Function to check and start Caffeine
-check_caffeine() {
-    log "Checking Caffeine status..."
-    
-    # Check if Caffeine is installed
-    if ! command -v caffeine &> /dev/null; then
-        log "${YELLOW}Caffeine is not installed. Installing Caffeine...${NC}"
-        notify "📦 Installing Caffeine Application..."
-        
-        # Install Caffeine using Homebrew
-        if ! brew install --cask caffeine; then
-            log "${RED}Failed to install Caffeine${NC}"
-            notify "❌ Caffeine Installation Failed - Check logs for details"
-            return 1
-        fi
-        
-        log "${GREEN}Caffeine installed successfully${NC}"
-        notify "✅ Caffeine Installed Successfully"
-    fi
-    
-    # Check if Caffeine is running
-    if ! ps aux | grep -v grep | grep -q "caffeine"; then
-        log "${YELLOW}Caffeine is not running. Starting Caffeine...${NC}"
-        notify "⚡ Starting Caffeine Service..."
-        open -a Caffeine
-        sleep 2
-    fi
-    
-    # Verify Caffeine is running
-    if ps aux | grep -v grep | grep -q "caffeine"; then
-        log "${GREEN}Caffeine is running${NC}"
-        notify "✅ Caffeine Service Running"
-        return 0
-    else
-        log "${RED}Failed to start Caffeine${NC}"
-        notify "❌ Caffeine Service Failed to Start - Check logs for details"
-        return 1
-    fi
-}
-
-# Main execution
-log "Starting development environment setup..."
-notify "🚀 Starting WhatsDesigns Development Environment Setup"
-
-# Run prerequisites check
-if ! ./scripts/check-prerequisites.sh; then
-    log "${RED}Prerequisites check failed. Please fix the issues and try again.${NC}"
-    notify "❌ Prerequisites Check Failed - Check logs for details"
-    exit 1
-fi
-
-# Check and start Caffeine
-if ! check_caffeine; then
-    log "${RED}Caffeine service check failed. Please fix the issues and try again.${NC}"
-    notify "❌ Caffeine Service Failed - Check logs for details"
-    exit 1
-fi
-
-# Start the server
-check_server
-ensure_directories
-start_server
-
-log "${GREEN}Development environment setup completed${NC}"
-notify "✅ WhatsDesigns Development Server Ready - Access at http://localhost:3000"
-
 # Function to start the server
 start_server() {
     log "Starting development server..."
@@ -225,4 +133,128 @@ start_server() {
     log "${RED}Server failed to start${NC}"
     notify "❌ Server Failed to Start - Check logs for details"
     exit 1
-} 
+}
+
+# Function to check if server is already running
+check_server() {
+    # Check main PID file
+    if is_process_running "$PID_FILE"; then
+        local pid=$(cat "$PID_FILE")
+        log "${YELLOW}Development server is already running with PID: $pid${NC}"
+        notify "WhatsDesigns Development server is already running on port 3000"
+        exit 1
+    fi
+    
+    # Check Next.js PID file
+    if is_process_running "$NEXT_PID_FILE"; then
+        local pid=$(cat "$NEXT_PID_FILE")
+        log "${YELLOW}Found stale Next.js process with PID: $pid${NC}"
+        stop_process "$NEXT_PID_FILE" "Next.js process"
+    fi
+    
+    # Check for any processes on port 3000
+    if lsof -i :3000 > /dev/null 2>&1; then
+        local pid=$(lsof -t -i :3000)
+        log "${YELLOW}Found process running on port 3000 (PID: $pid)${NC}"
+        kill "$pid"
+        sleep 2
+    fi
+}
+
+# Function to check and start Caffeine
+check_caffeine() {
+    log "Checking Caffeine status..."
+    
+    # Check if we're on Apple Silicon
+    if [[ $(uname -m) == "arm64" ]]; then
+        log "Detected Apple Silicon Mac (M1/M2/M3)"
+        
+        # Check if Rosetta 2 is installed
+        if ! /usr/bin/pgrep -q oahd; then
+            log "${YELLOW}Rosetta 2 is not installed. Installing Rosetta 2...${NC}"
+            notify "📦 Installing Rosetta 2 for M1/M2/M3 compatibility..."
+            
+            # Install Rosetta 2
+            if ! softwareupdate --install-rosetta --agree-to-license > /dev/null 2>&1; then
+                log "${RED}Failed to install Rosetta 2${NC}"
+                notify "❌ Rosetta 2 Installation Failed - Check logs for details"
+                return 1
+            fi
+            
+            log "${GREEN}Rosetta 2 installed successfully${NC}"
+            notify "✅ Rosetta 2 Installed Successfully"
+        else
+            log "${GREEN}Rosetta 2 is already installed${NC}"
+        fi
+    fi
+    
+    # Check if Caffeine is installed
+    if ! command -v caffeinate &> /dev/null; then
+        log "${YELLOW}Using built-in caffeinate command instead of Caffeine app${NC}"
+        
+        # Start caffeinate command (built-in to macOS)
+        caffeinate -d -i &
+        CAFFEINE_PID=$!
+        
+        # Store the PID
+        echo $CAFFEINE_PID > "$APP_DIR/caffeine.pid"
+        
+        log "${GREEN}System caffeinate started (PID: $CAFFEINE_PID)${NC}"
+        notify "✅ System Caffeinate Running"
+        return 0
+    elif ! ps aux | grep -v grep | grep -q "Caffeine.app"; then
+        log "${YELLOW}Caffeine app is not running. Starting Caffeine app...${NC}"
+        notify "⚡ Starting Caffeine App..."
+        open -a Caffeine
+        sleep 2
+        
+        # Verify Caffeine is running
+        if ps aux | grep -v grep | grep -q "Caffeine.app"; then
+            log "${GREEN}Caffeine app is running${NC}"
+            notify "✅ Caffeine App Running"
+            return 0
+        else
+            log "${YELLOW}Falling back to built-in caffeinate command${NC}"
+            
+            # Start caffeinate command (built-in to macOS)
+            caffeinate -d -i &
+            CAFFEINE_PID=$!
+            
+            # Store the PID
+            echo $CAFFEINE_PID > "$APP_DIR/caffeine.pid"
+            
+            log "${GREEN}System caffeinate started (PID: $CAFFEINE_PID)${NC}"
+            notify "✅ System Caffeinate Running"
+            return 0
+        fi
+    else
+        log "${GREEN}Caffeine is already running${NC}"
+        notify "✅ Caffeine App Already Running"
+        return 0
+    fi
+}
+
+# Main execution
+log "Starting development environment setup..."
+notify "🚀 Starting WhatsDesigns Development Environment Setup"
+
+# Run prerequisites check
+if ! ./scripts/check-prerequisites.sh; then
+    log "${RED}Prerequisites check failed. Please fix the issues and try again.${NC}"
+    notify "❌ Prerequisites Check Failed - Check logs for details"
+    exit 1
+fi
+
+# Check and start Caffeine (but make it optional)
+if ! check_caffeine; then
+    log "${YELLOW}Caffeine service check failed, but continuing anyway...${NC}"
+    notify "⚠️ Caffeine Service Failed - Server will still start"
+fi
+
+# Start the server
+check_server
+ensure_directories
+start_server
+
+log "${GREEN}Development environment setup completed${NC}"
+notify "✅ WhatsDesigns Development Server Ready - Access at http://localhost:3000" 
