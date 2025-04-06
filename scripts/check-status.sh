@@ -51,6 +51,9 @@ check_file() {
 check_process() {
     local pid_file="$1"
     local name="$2"
+    local port="$3"
+    
+    # First check PID file
     if [ -f "$pid_file" ]; then
         local pid=$(cat "$pid_file")
         if ps -p "$pid" > /dev/null; then
@@ -58,12 +61,21 @@ check_process() {
             return 0
         else
             echo -e "${CROSS_MARK} $name is not running (stale PID file)"
-            return 1
+            rm -f "$pid_file"
         fi
-    else
-        echo -e "${CROSS_MARK} $name is not running"
-        return 1
     fi
+    
+    # If no PID file or stale PID, check port
+    if [ -n "$port" ]; then
+        if lsof -i ":$port" > /dev/null 2>&1; then
+            local pid=$(lsof -t -i ":$port")
+            echo -e "${CHECK_MARK} $name is running on port $port (PID: $pid)"
+            return 0
+        fi
+    fi
+    
+    echo -e "${CROSS_MARK} $name is not running"
+    return 1
 }
 
 # Function to check if a port is in use or redirecting
@@ -169,25 +181,30 @@ check_file "$APP_DIR/next.config.ts" "Next.js configuration"
 
 # Check processes
 echo -e "\n${YELLOW}Running Processes:${NC}"
-check_process "$APP_DIR/prod.pid" "Production server"
-check_process "$APP_DIR/dev.pid" "Development server"
+check_process "$APP_DIR/prod.pid" "Production server" "3002"
+check_process "$APP_DIR/dev.pid" "Development server" "3000"
+check_process "$APP_DIR/prompt.pid" "Prompt service" "3001"
 
 # Check ports
 echo -e "\n${YELLOW}Port Status:${NC}"
 check_port "3000" "Development server"
 check_port "3002" "Production server"
+check_port "3001" "Prompt service"
 check_port "80" "HTTP"
 check_port "443" "HTTPS"
 
 # Check services
 echo -e "\n${YELLOW}System Services:${NC}"
 check_service "com.whatsdesigns.prod" "Production service"
+check_service "com.whatsdesigns.dev" "Development service"
+check_service "com.whatsdesigns.prompt" "Prompt service"
 check_service "com.whatsdesigns.caffeine" "Caffeine service"
 
 # Check environment variables
 echo -e "\n${YELLOW}Environment Configuration:${NC}"
 check_env_vars "$APP_DIR/config/.env.production" "Production"
 check_env_vars "$APP_DIR/config/.env.development" "Development"
+check_env_vars "$APP_DIR/config/.env.prompt" "Prompt"
 
 # Check SSL certificates
 echo -e "\n${YELLOW}SSL Certificates:${NC}"

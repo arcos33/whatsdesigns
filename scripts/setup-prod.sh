@@ -1,5 +1,22 @@
 #!/bin/bash
 
+# =============================================================================
+# ONE-TIME SETUP SCRIPT
+# =============================================================================
+# This script sets up the production environment as a macOS LaunchAgent service.
+# It only needs to be run ONCE to configure automatic startup of the production
+# environment when your system boots.
+#
+# After running this script:
+# - The production environment will start automatically on system boot
+# - You don't need to run this script again unless you need to reinstall the service
+# - Use start-prod.sh to manually start the production environment
+# - Use stop-prod.sh to stop the production environment
+#
+# To verify the setup:
+#   launchctl list | grep whatsdesigns
+# =============================================================================
+
 # Configuration
 APP_DIR="/Users/jediOne/dev/whatsdesigns"
 LAUNCH_AGENTS_DIR="$HOME/Library/LaunchAgents"

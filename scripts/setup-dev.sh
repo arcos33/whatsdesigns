@@ -1,5 +1,22 @@
 #!/bin/bash
 
+# =============================================================================
+# ONE-TIME SETUP SCRIPT
+# =============================================================================
+# This script sets up the development environment as a macOS LaunchAgent service.
+# It only needs to be run ONCE to configure automatic startup of the development
+# environment when your system boots.
+#
+# After running this script:
+# - The development environment will start automatically on system boot
+# - You don't need to run this script again unless you need to reinstall the service
+# - Use start-dev.sh to manually start the development environment
+# - Use stop-dev.sh to stop the development environment
+#
+# To verify the setup:
+#   launchctl list | grep whatsdesigns
+# =============================================================================
+
 # Configuration
 APP_DIR="/Users/jediOne/dev/whatsdesigns"
 LAUNCH_AGENTS_DIR="$HOME/Library/LaunchAgents"

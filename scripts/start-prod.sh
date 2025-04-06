@@ -128,39 +128,72 @@ check_server() {
 check_caffeine() {
     log "Checking Caffeine status..."
     
-    # Check if Caffeine is installed
-    if ! command -v caffeine &> /dev/null; then
-        log "${YELLOW}Caffeine is not installed. Installing Caffeine...${NC}"
-        notify "📦 Installing Caffeine Application..."
+    # Check if we're on Apple Silicon
+    if [[ $(uname -m) == "arm64" ]]; then
+        log "Detected Apple Silicon Mac (M1/M2/M3)"
         
-        # Install Caffeine using Homebrew
-        if ! brew install --cask caffeine; then
-            log "${RED}Failed to install Caffeine${NC}"
-            notify "❌ Caffeine Installation Failed - Check logs for details"
-            return 1
+        # Check if Rosetta 2 is installed
+        if ! /usr/bin/pgrep -q oahd; then
+            log "${YELLOW}Rosetta 2 is not installed. Installing Rosetta 2...${NC}"
+            notify "📦 Installing Rosetta 2 for M1/M2/M3 compatibility..."
+            
+            # Install Rosetta 2
+            if ! softwareupdate --install-rosetta --agree-to-license > /dev/null 2>&1; then
+                log "${RED}Failed to install Rosetta 2${NC}"
+                notify "❌ Rosetta 2 Installation Failed - Check logs for details"
+                return 1
+            fi
+            
+            log "${GREEN}Rosetta 2 installed successfully${NC}"
+            notify "✅ Rosetta 2 Installed Successfully"
+        else
+            log "${GREEN}Rosetta 2 is already installed${NC}"
         fi
-        
-        log "${GREEN}Caffeine installed successfully${NC}"
-        notify "✅ Caffeine Installed Successfully"
     fi
     
-    # Check if Caffeine is running
-    if ! ps aux | grep -v grep | grep -q "caffeine"; then
-        log "${YELLOW}Caffeine is not running. Starting Caffeine...${NC}"
-        notify "⚡ Starting Caffeine Service..."
+    # Check if Caffeine is installed
+    if ! command -v caffeinate &> /dev/null; then
+        log "${YELLOW}Using built-in caffeinate command instead of Caffeine app${NC}"
+        
+        # Start caffeinate command (built-in to macOS)
+        caffeinate -d -i &
+        CAFFEINE_PID=$!
+        
+        # Store the PID
+        echo $CAFFEINE_PID > "$APP_DIR/caffeine.pid"
+        
+        log "${GREEN}System caffeinate started (PID: $CAFFEINE_PID)${NC}"
+        notify "✅ System Caffeinate Running"
+        return 0
+    elif ! ps aux | grep -v grep | grep -q "Caffeine.app"; then
+        log "${YELLOW}Caffeine app is not running. Starting Caffeine app...${NC}"
+        notify "⚡ Starting Caffeine App..."
         open -a Caffeine
         sleep 2
-    fi
-    
-    # Verify Caffeine is running
-    if ps aux | grep -v grep | grep -q "caffeine"; then
-        log "${GREEN}Caffeine is running${NC}"
-        notify "✅ Caffeine Service Running"
-        return 0
+        
+        # Verify Caffeine is running
+        if ps aux | grep -v grep | grep -q "Caffeine.app"; then
+            log "${GREEN}Caffeine app is running${NC}"
+            notify "✅ Caffeine App Running"
+            return 0
+        else
+            log "${YELLOW}Falling back to built-in caffeinate command${NC}"
+            
+            # Start caffeinate command (built-in to macOS)
+            caffeinate -d -i &
+            CAFFEINE_PID=$!
+            
+            # Store the PID
+            echo $CAFFEINE_PID > "$APP_DIR/caffeine.pid"
+            
+            log "${GREEN}System caffeinate started (PID: $CAFFEINE_PID)${NC}"
+            notify "✅ System Caffeinate Running"
+            return 0
+        fi
     else
-        log "${RED}Failed to start Caffeine${NC}"
-        notify "❌ Caffeine Service Failed to Start - Check logs for details"
-        return 1
+        log "${GREEN}Caffeine is already running${NC}"
+        notify "✅ Caffeine App Already Running"
+        return 0
     fi
 }
 
@@ -179,19 +212,32 @@ start_server() {
     # Ensure we have a fresh build
     log "Building application..."
     notify "🏗️ Building WhatsDesigns Production Application..."
-    if ! npm run build; then
+    if ! npm run build:prod; then
         log "${RED}Build failed${NC}"
         notify "❌ Build Failed - Check logs for details"
         exit 1
     fi
     
-    # Start the server using Next.js production mode
+    # Copy static files to standalone directory
+    log "Copying static files..."
+    cp -r public .next/standalone/
+    cp -r .next/static .next/standalone/.next/
+    
+    # Start the server using standalone mode
     log "Starting Next.js server..."
     notify "🚀 Launching Production Server on Port 3002"
-    NODE_ENV=production PORT=3002 npm run start > "$LOG_DIR/prod-output.log" 2> "$LOG_DIR/prod-error.log" & 
+    
+    # Use a clearer server startup approach
+    cd .next/standalone
+    PORT=3002 NODE_ENV=production node server.js > "$LOG_DIR/prod-output.log" 2> "$LOG_DIR/prod-error.log" &
+    SERVER_PID=$!
     
     # Store the PID
-    echo $! > "$PID_FILE"
+    echo $SERVER_PID > "$PID_FILE"
+    log "Server started with PID: $SERVER_PID"
+    
+    # Detach the process from the terminal
+    disown $SERVER_PID
     
     # Wait for server to start
     for i in {1..30}; do
@@ -203,7 +249,14 @@ start_server() {
         sleep 1
     done
     
+    # If we get here, the server failed to start
     log "${RED}Server failed to start${NC}"
+    log "Checking server process..."
+    if ps -p $SERVER_PID > /dev/null; then
+        log "${YELLOW}Server process is running but not responding${NC}"
+    else
+        log "${RED}Server process is not running${NC}"
+    fi
     notify "❌ Server Failed to Start - Check logs for details"
     exit 1
 }
@@ -219,11 +272,10 @@ if ! ./scripts/check-prerequisites.sh; then
     exit 1
 fi
 
-# Check and start Caffeine
+# Check and start Caffeine (but make it optional)
 if ! check_caffeine; then
-    log "${RED}Caffeine service check failed. Please fix the issues and try again.${NC}"
-    notify "❌ Caffeine Service Failed - Check logs for details"
-    exit 1
+    log "${YELLOW}Caffeine service check failed, but continuing anyway...${NC}"
+    notify "⚠️ Caffeine Service Failed - Server will still start"
 fi
 
 # Start the server
