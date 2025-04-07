@@ -1,10 +1,15 @@
+"use client";
+
 import Link from "next/link";
 import { env } from "@/utils/env";
 import EnvironmentTest from '@/components/EnvironmentTest';
+import { useSession } from "next-auth/react";
 
 export default function Home() {
   // Force dark theme styling for consistency across environments
   const darkTheme = true;
+  const { data: session, status } = useSession();
+  const isAuthenticated = status === "authenticated";
   
   return (
     <div className="min-h-screen bg-gray-900 text-white">
@@ -17,6 +22,50 @@ export default function Home() {
         {env.environment.toUpperCase()}
       </div>
 
+      {/* Navigation */}
+      <header className="absolute top-0 left-0 right-0 z-10">
+        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16 items-center">
+            <div className="flex-shrink-0">
+              <Link href="/" className="text-xl font-bold">WhatsDesigns</Link>
+            </div>
+            <div className="flex items-center space-x-4">
+              {isAuthenticated ? (
+                <>
+                  <Link 
+                    href="/dashboard" 
+                    className="text-gray-300 hover:text-white transition-colors"
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/auth/signout"
+                    className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors"
+                  >
+                    Sign Out
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/auth/signin"
+                    className="text-gray-300 hover:text-white transition-colors"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/auth/signup"
+                    className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+        </nav>
+      </header>
+
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
@@ -28,10 +77,10 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/upload"
+              href={isAuthenticated ? "/dashboard" : "/auth/signin"}
               className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors"
             >
-              Get Started
+              {isAuthenticated ? "Go to Dashboard" : "Get Started"}
             </Link>
             <Link
               href="/gallery"
@@ -91,10 +140,10 @@ export default function Home() {
             Join thousands of users who are already creating stunning designs with WhatsDesigns.
           </p>
           <Link
-            href="/signup"
+            href={isAuthenticated ? "/dashboard" : "/auth/signup"}
             className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors"
           >
-            Sign Up Now
+            {isAuthenticated ? "Go to Dashboard" : "Sign Up Now"}
           </Link>
         </div>
       </section>
