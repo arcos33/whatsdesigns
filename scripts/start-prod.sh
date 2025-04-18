@@ -223,12 +223,20 @@ start_server() {
     cp -r public .next/standalone/
     cp -r .next/static .next/standalone/.next/
     
+    # Make sure we also copy the production environment file
+    log "Copying production environment file..."
+    cp config/.env.production .next/standalone/.env.production
+    
     # Start the server using standalone mode
     log "Starting Next.js server..."
     notify "🚀 Launching Production Server on Port 3002"
     
     # Use a clearer server startup approach
     cd .next/standalone
+    # Load the production environment variables
+    set -a
+    source .env.production
+    set +a
     PORT=3002 NODE_ENV=production node server.js > "$LOG_DIR/prod-output.log" 2> "$LOG_DIR/prod-error.log" &
     SERVER_PID=$!
     

@@ -1,203 +1,90 @@
-[2025-03-26 17:48:53] Current directory before navigation: /Users/joelbiz/dev/whatsdesigns
-[2025-03-26 17:48:53] Current directory after navigation: /Users/joelbiz/dev/whatsdesigns
-[2025-03-26 17:48:53] Directory contents:
-total 440
-drwxr-xr-x   19 joelbiz  staff     608 Mar 26 17:45 .
-drwxr-xr-x    4 joelbiz  staff     128 Mar 25 13:04 ..
-drwxr-xr-x    3 joelbiz  staff      96 Mar 25 13:37 .cursor
-drwxr-xr-x   12 joelbiz  staff     384 Mar 26 16:32 .git
--rw-r--r--    1 joelbiz  staff     480 Mar 25 13:34 .gitignore
-drwxr-xr-x   22 joelbiz  staff     704 Mar 26 16:21 .next
--rw-r--r--    1 joelbiz  staff    1450 Mar 25 13:34 README.md
-drwxr-xr-x   11 joelbiz  staff     352 Mar 26 17:45 config
--rw-r--r--    1 joelbiz  staff    5141 Mar 26 16:11 dev-journal.md
-drwxr-xr-x   13 joelbiz  staff     416 Mar 26 13:16 docs
-drwxr-xr-x    5 joelbiz  staff     160 Mar 26 17:48 logs
--rw-r--r--    1 joelbiz  staff     277 Mar 26 12:36 next-env.d.ts
-drwxr-xr-x    3 joelbiz  staff      96 Mar 26 16:06 nginx
-drwxr-xr-x  276 joelbiz  staff    8832 Mar 25 13:35 node_modules
--rw-r--r--    1 joelbiz  staff  197410 Mar 25 13:35 package-lock.json
--rw-r--r--    1 joelbiz  staff     810 Mar 26 17:46 package.json
-drwxr-xr-x    7 joelbiz  staff     224 Mar 25 13:34 public
-drwxr-xr-x   11 joelbiz  staff     352 Mar 26 17:36 scripts
-drwxr-xr-x    6 joelbiz  staff     192 Mar 26 12:35 src
-[2025-03-26 17:53:25] Current directory before navigation: /Users/joelbiz/dev/whatsdesigns
-[2025-03-26 17:53:25] Current directory after navigation: /Users/joelbiz/dev/whatsdesigns
-[2025-03-26 17:53:25] Directory contents:
-total 440
-drwxr-xr-x   19 joelbiz  staff     608 Mar 26 17:45 .
-drwxr-xr-x    4 joelbiz  staff     128 Mar 25 13:04 ..
-drwxr-xr-x    3 joelbiz  staff      96 Mar 25 13:37 .cursor
-drwxr-xr-x   12 joelbiz  staff     384 Mar 26 16:32 .git
--rw-r--r--    1 joelbiz  staff     480 Mar 25 13:34 .gitignore
-drwxr-xr-x   22 joelbiz  staff     704 Mar 26 16:21 .next
--rw-r--r--    1 joelbiz  staff    1450 Mar 25 13:34 README.md
-drwxr-xr-x   11 joelbiz  staff     352 Mar 26 17:45 config
--rw-r--r--    1 joelbiz  staff    6212 Mar 26 17:51 dev-journal.md
-drwxr-xr-x   13 joelbiz  staff     416 Mar 26 13:16 docs
-drwxr-xr-x    5 joelbiz  staff     160 Mar 26 17:48 logs
--rw-r--r--    1 joelbiz  staff     277 Mar 26 12:36 next-env.d.ts
-drwxr-xr-x    3 joelbiz  staff      96 Mar 26 16:06 nginx
-drwxr-xr-x  276 joelbiz  staff    8832 Mar 25 13:35 node_modules
--rw-r--r--    1 joelbiz  staff  197410 Mar 25 13:35 package-lock.json
--rw-r--r--    1 joelbiz  staff     810 Mar 26 17:46 package.json
-drwxr-xr-x    7 joelbiz  staff     224 Mar 25 13:34 public
-drwxr-xr-x   11 joelbiz  staff     352 Mar 26 17:36 scripts
-drwxr-xr-x    6 joelbiz  staff     192 Mar 26 12:35 src
-[2025-03-26 17:54:10] Current directory before navigation: /Users/joelbiz/dev/whatsdesigns
-[2025-03-26 17:54:10] Current directory after navigation: /Users/joelbiz/dev/whatsdesigns
-[2025-03-26 17:54:10] Directory contents:
-total 440
-drwxr-xr-x   19 joelbiz  staff     608 Mar 26 17:45 .
-drwxr-xr-x    4 joelbiz  staff     128 Mar 25 13:04 ..
-drwxr-xr-x    3 joelbiz  staff      96 Mar 25 13:37 .cursor
-drwxr-xr-x   12 joelbiz  staff     384 Mar 26 16:32 .git
--rw-r--r--    1 joelbiz  staff     480 Mar 25 13:34 .gitignore
-drwxr-xr-x   22 joelbiz  staff     704 Mar 26 16:21 .next
--rw-r--r--    1 joelbiz  staff    1450 Mar 25 13:34 README.md
-drwxr-xr-x   11 joelbiz  staff     352 Mar 26 17:45 config
--rw-r--r--    1 joelbiz  staff    6212 Mar 26 17:51 dev-journal.md
-drwxr-xr-x   13 joelbiz  staff     416 Mar 26 13:16 docs
-drwxr-xr-x    5 joelbiz  staff     160 Mar 26 17:48 logs
--rw-r--r--    1 joelbiz  staff     277 Mar 26 12:36 next-env.d.ts
-drwxr-xr-x    3 joelbiz  staff      96 Mar 26 16:06 nginx
-drwxr-xr-x  276 joelbiz  staff    8832 Mar 25 13:35 node_modules
--rw-r--r--    1 joelbiz  staff  197410 Mar 25 13:35 package-lock.json
--rw-r--r--    1 joelbiz  staff     810 Mar 26 17:46 package.json
-drwxr-xr-x    7 joelbiz  staff     224 Mar 25 13:34 public
-drwxr-xr-x   11 joelbiz  staff     352 Mar 26 17:36 scripts
-drwxr-xr-x    6 joelbiz  staff     192 Mar 26 12:35 src
-[2025-03-26 17:54:58] Current directory before navigation: /Users/joelbiz/dev/whatsdesigns
-[2025-03-26 17:54:58] Current directory after navigation: /Users/joelbiz/dev/whatsdesigns
-[2025-03-26 17:54:58] Directory contents:
-total 440
-drwxr-xr-x   19 joelbiz  staff     608 Mar 26 17:45 .
-drwxr-xr-x    4 joelbiz  staff     128 Mar 25 13:04 ..
-drwxr-xr-x    3 joelbiz  staff      96 Mar 25 13:37 .cursor
-drwxr-xr-x   12 joelbiz  staff     384 Mar 26 16:32 .git
--rw-r--r--    1 joelbiz  staff     480 Mar 25 13:34 .gitignore
-drwxr-xr-x   22 joelbiz  staff     704 Mar 26 16:21 .next
--rw-r--r--    1 joelbiz  staff    1450 Mar 25 13:34 README.md
-drwxr-xr-x   11 joelbiz  staff     352 Mar 26 17:45 config
--rw-r--r--    1 joelbiz  staff    6212 Mar 26 17:51 dev-journal.md
-drwxr-xr-x   13 joelbiz  staff     416 Mar 26 13:16 docs
-drwxr-xr-x    5 joelbiz  staff     160 Mar 26 17:48 logs
--rw-r--r--    1 joelbiz  staff     277 Mar 26 12:36 next-env.d.ts
-drwxr-xr-x    3 joelbiz  staff      96 Mar 26 16:06 nginx
-drwxr-xr-x  276 joelbiz  staff    8832 Mar 25 13:35 node_modules
--rw-r--r--    1 joelbiz  staff  197410 Mar 25 13:35 package-lock.json
--rw-r--r--    1 joelbiz  staff     810 Mar 26 17:46 package.json
-drwxr-xr-x    7 joelbiz  staff     224 Mar 25 13:34 public
-drwxr-xr-x   11 joelbiz  staff     352 Mar 26 17:36 scripts
-drwxr-xr-x    6 joelbiz  staff     192 Mar 26 12:35 src
-[2025-03-26 18:02:16] Current directory before navigation: /Users/joelbiz/dev/whatsdesigns
-[2025-03-26 18:02:16] Current directory after navigation: /Users/joelbiz/dev/whatsdesigns
-[2025-03-26 18:02:16] Directory contents:
-total 440
-drwxr-xr-x   19 joelbiz  staff     608 Mar 26 17:45 .
-drwxr-xr-x    4 joelbiz  staff     128 Mar 25 13:04 ..
-drwxr-xr-x    3 joelbiz  staff      96 Mar 25 13:37 .cursor
-drwxr-xr-x   12 joelbiz  staff     384 Mar 26 16:32 .git
--rw-r--r--    1 joelbiz  staff     480 Mar 25 13:34 .gitignore
-drwxr-xr-x   22 joelbiz  staff     704 Mar 26 16:21 .next
--rw-r--r--    1 joelbiz  staff    1450 Mar 25 13:34 README.md
-drwxr-xr-x   12 joelbiz  staff     384 Mar 26 17:57 config
--rw-r--r--    1 joelbiz  staff    6454 Mar 26 17:58 dev-journal.md
-drwxr-xr-x   13 joelbiz  staff     416 Mar 26 13:16 docs
-drwxr-xr-x    6 joelbiz  staff     192 Mar 26 18:01 logs
--rw-r--r--    1 joelbiz  staff     277 Mar 26 12:36 next-env.d.ts
-drwxr-xr-x    3 joelbiz  staff      96 Mar 26 16:06 nginx
-drwxr-xr-x  276 joelbiz  staff    8832 Mar 25 13:35 node_modules
--rw-r--r--    1 joelbiz  staff  197410 Mar 25 13:35 package-lock.json
--rw-r--r--    1 joelbiz  staff     810 Mar 26 17:46 package.json
-drwxr-xr-x    7 joelbiz  staff     224 Mar 25 13:34 public
-drwxr-xr-x   10 joelbiz  staff     320 Mar 26 18:00 scripts
-drwxr-xr-x    6 joelbiz  staff     192 Mar 26 12:35 src
-[2025-03-26 18:08:33] Current directory before navigation: /Users/joelbiz/dev/whatsdesigns
-[2025-03-26 18:08:33] Current directory after navigation: /Users/joelbiz/dev/whatsdesigns
-[2025-03-26 18:08:33] Directory contents:
-total 424
-drwxr-xr-x   18 joelbiz  staff     576 Mar 26 18:03 .
-drwxr-xr-x    4 joelbiz  staff     128 Mar 25 13:04 ..
-drwxr-xr-x    3 joelbiz  staff      96 Mar 25 13:37 .cursor
-drwxr-xr-x   12 joelbiz  staff     384 Mar 26 16:32 .git
--rw-r--r--    1 joelbiz  staff     480 Mar 25 13:34 .gitignore
-drwxr-xr-x   22 joelbiz  staff     704 Mar 26 16:21 .next
--rw-r--r--    1 joelbiz  staff    1450 Mar 25 13:34 README.md
-drwxr-xr-x   12 joelbiz  staff     384 Mar 26 17:57 config
-drwxr-xr-x   14 joelbiz  staff     448 Mar 26 18:03 docs
-drwxr-xr-x    6 joelbiz  staff     192 Mar 26 18:01 logs
--rw-r--r--    1 joelbiz  staff     277 Mar 26 12:36 next-env.d.ts
-drwxr-xr-x    3 joelbiz  staff      96 Mar 26 16:06 nginx
-drwxr-xr-x  276 joelbiz  staff    8832 Mar 25 13:35 node_modules
--rw-r--r--    1 joelbiz  staff  197410 Mar 25 13:35 package-lock.json
--rw-r--r--    1 joelbiz  staff     810 Mar 26 17:46 package.json
-drwxr-xr-x    7 joelbiz  staff     224 Mar 25 13:34 public
-drwxr-xr-x   10 joelbiz  staff     320 Mar 26 18:00 scripts
-drwxr-xr-x    6 joelbiz  staff     192 Mar 26 12:35 src
-[2025-03-26 18:11:04] Current directory before navigation: /Users/joelbiz/dev/whatsdesigns
-[2025-03-26 18:11:04] Current directory after navigation: /Users/joelbiz/dev/whatsdesigns
-[2025-03-26 18:11:04] Directory contents:
-total 424
-drwxr-xr-x   18 joelbiz  staff     576 Mar 26 18:03 .
-drwxr-xr-x    4 joelbiz  staff     128 Mar 25 13:04 ..
-drwxr-xr-x    3 joelbiz  staff      96 Mar 25 13:37 .cursor
-drwxr-xr-x   12 joelbiz  staff     384 Mar 26 16:32 .git
--rw-r--r--    1 joelbiz  staff     480 Mar 25 13:34 .gitignore
-drwxr-xr-x   22 joelbiz  staff     704 Mar 26 16:21 .next
--rw-r--r--    1 joelbiz  staff    1450 Mar 25 13:34 README.md
-drwxr-xr-x   12 joelbiz  staff     384 Mar 26 17:57 config
-drwxr-xr-x   14 joelbiz  staff     448 Mar 26 18:03 docs
-drwxr-xr-x    6 joelbiz  staff     192 Mar 26 18:01 logs
--rw-r--r--    1 joelbiz  staff     277 Mar 26 12:36 next-env.d.ts
-drwxr-xr-x    3 joelbiz  staff      96 Mar 26 16:06 nginx
-drwxr-xr-x  276 joelbiz  staff    8832 Mar 25 13:35 node_modules
--rw-r--r--    1 joelbiz  staff  197410 Mar 25 13:35 package-lock.json
--rw-r--r--    1 joelbiz  staff     810 Mar 26 17:46 package.json
-drwxr-xr-x    7 joelbiz  staff     224 Mar 25 13:34 public
-drwxr-xr-x   10 joelbiz  staff     320 Mar 26 18:00 scripts
-drwxr-xr-x    6 joelbiz  staff     192 Mar 26 12:35 src
-[2025-03-26 18:16:59] Current directory before navigation: /Users/joelbiz/dev/whatsdesigns
-[2025-03-26 18:16:59] Current directory after navigation: /Users/joelbiz/dev/whatsdesigns
-[2025-03-26 18:16:59] Directory contents:
-total 424
-drwxr-xr-x   18 joelbiz  staff     576 Mar 26 18:03 .
-drwxr-xr-x    4 joelbiz  staff     128 Mar 25 13:04 ..
-drwxr-xr-x    3 joelbiz  staff      96 Mar 25 13:37 .cursor
-drwxr-xr-x   12 joelbiz  staff     384 Mar 26 16:32 .git
--rw-r--r--    1 joelbiz  staff     480 Mar 25 13:34 .gitignore
-drwxr-xr-x   22 joelbiz  staff     704 Mar 26 16:21 .next
--rw-r--r--    1 joelbiz  staff    1450 Mar 25 13:34 README.md
-drwxr-xr-x   12 joelbiz  staff     384 Mar 26 17:57 config
-drwxr-xr-x   14 joelbiz  staff     448 Mar 26 18:03 docs
-drwxr-xr-x    6 joelbiz  staff     192 Mar 26 18:01 logs
--rw-r--r--    1 joelbiz  staff     277 Mar 26 12:36 next-env.d.ts
-drwxr-xr-x    3 joelbiz  staff      96 Mar 26 16:06 nginx
-drwxr-xr-x  276 joelbiz  staff    8832 Mar 25 13:35 node_modules
--rw-r--r--    1 joelbiz  staff  197410 Mar 25 13:35 package-lock.json
--rw-r--r--    1 joelbiz  staff     810 Mar 26 17:46 package.json
-drwxr-xr-x    7 joelbiz  staff     224 Mar 25 13:34 public
-drwxr-xr-x   10 joelbiz  staff     320 Mar 26 18:00 scripts
-drwxr-xr-x    6 joelbiz  staff     192 Mar 26 12:35 src
-[2025-03-26 18:19:04] Current directory before navigation: /Users/joelbiz/dev/whatsdesigns
-[2025-03-26 18:19:04] Current directory after navigation: /Users/joelbiz/dev/whatsdesigns
-[2025-03-26 18:19:04] Directory contents:
-total 424
-drwxr-xr-x   18 joelbiz  staff     576 Mar 26 18:03 .
-drwxr-xr-x    4 joelbiz  staff     128 Mar 25 13:04 ..
-drwxr-xr-x    3 joelbiz  staff      96 Mar 25 13:37 .cursor
-drwxr-xr-x   12 joelbiz  staff     384 Mar 26 16:32 .git
--rw-r--r--    1 joelbiz  staff     480 Mar 25 13:34 .gitignore
-drwxr-xr-x   22 joelbiz  staff     704 Mar 26 16:21 .next
--rw-r--r--    1 joelbiz  staff    1450 Mar 25 13:34 README.md
-drwxr-xr-x   12 joelbiz  staff     384 Mar 26 17:57 config
-drwxr-xr-x   14 joelbiz  staff     448 Mar 26 18:03 docs
-drwxr-xr-x    6 joelbiz  staff     192 Mar 26 18:01 logs
--rw-r--r--    1 joelbiz  staff     277 Mar 26 12:36 next-env.d.ts
-drwxr-xr-x    3 joelbiz  staff      96 Mar 26 16:06 nginx
-drwxr-xr-x  276 joelbiz  staff    8832 Mar 25 13:35 node_modules
--rw-r--r--    1 joelbiz  staff  197410 Mar 25 13:35 package-lock.json
--rw-r--r--    1 joelbiz  staff     810 Mar 26 17:46 package.json
-drwxr-xr-x    7 joelbiz  staff     224 Mar 25 13:34 public
-drwxr-xr-x   10 joelbiz  staff     320 Mar 26 18:00 scripts
-drwxr-xr-x    6 joelbiz  staff     192 Mar 26 12:35 src
+
+[2025-03-29 23:52:08] Current directory before navigation: /Users/jediOne/dev/whatsdesigns/scripts
+[2025-03-29 23:52:08] Current directory after navigation: /Users/jediOne/dev/whatsdesigns
+[2025-03-29 23:52:08] Directory contents:
+total 584
+drwxr-xr-x@  24 jediOne  staff     768 Mar 29 22:47 .
+drwxr-xr-x   10 jediOne  staff     320 Mar 29 19:29 ..
+drwxr-xr-x@   3 jediOne  staff      96 Mar 29 19:29 .cursor
+-rw-r--r--@   1 jediOne  staff     872 Mar 29 22:47 .env
+-rw-r--r--@   1 jediOne  staff     577 Mar 29 22:47 .env.production
+drwxr-xr-x@  14 jediOne  staff     448 Mar 29 23:43 .git
+-rw-r--r--@   1 jediOne  staff     480 Mar 29 19:29 .gitignore
+drwxr-xr-x@  11 jediOne  staff     352 Mar 29 22:46 .next
+drwxr-xr-x@  12 jediOne  staff     384 Mar 29 19:44 config
+drwxr-xr-x@  14 jediOne  staff     448 Mar 29 19:29 docs
+drwxr-xr-x@   7 jediOne  staff     224 Mar 29 23:47 logs
+-rw-r--r--@   1 jediOne  staff     277 Mar 29 20:50 next-env.d.ts
+drwxr-xr-x@   3 jediOne  staff      96 Mar 29 19:29 nginx
+drwxr-xr-x@ 387 jediOne  staff   12384 Mar 29 22:30 node_modules
+-rw-r--r--@   1 jediOne  staff  259510 Mar 29 22:30 package-lock.json
+-rw-r--r--@   1 jediOne  staff    1115 Mar 29 22:30 package.json
+-rw-r--r--@   1 jediOne  staff      87 Mar 29 22:47 postcss.config.js
+drwxr-xr-x@   3 jediOne  staff      96 Mar 29 19:45 prisma
+drwxr-xr-x@   7 jediOne  staff     224 Mar 29 19:29 public
+-rw-r--r--@   1 jediOne  staff    1450 Mar 29 19:29 README.md
+drwxr-xr-x@  10 jediOne  staff     320 Mar 29 19:29 scripts
+drwxr-xr-x@   6 jediOne  staff     192 Mar 29 19:29 src
+-rw-r--r--@   1 jediOne  staff    1948 Mar 29 19:46 tailwind.config.js
+-rw-r--r--@   1 jediOne  staff     700 Mar 29 22:47 tsconfig.json
+[2025-03-30 11:57:10] Created Next.js build directories
+[2025-03-30 11:57:10] Current directory before navigation: /Users/jediOne/dev/whatsdesigns
+[2025-03-30 11:57:10] Current directory after navigation: /Users/jediOne/dev/whatsdesigns
+[2025-03-30 11:57:10] Directory contents:
+total 600
+drwxr-xr-x@  26 jediOne  staff     832 Mar 30 11:56 .
+drwxr-xr-x   10 jediOne  staff     320 Mar 29 19:29 ..
+drwxr-xr-x@   3 jediOne  staff      96 Mar 29 19:29 .cursor
+-rw-r--r--@   1 jediOne  staff     872 Mar 29 23:59 .env
+-rw-r--r--@   1 jediOne  staff     577 Mar 29 23:59 .env.production
+drwxr-xr-x@  14 jediOne  staff     448 Mar 29 23:43 .git
+-rw-r--r--@   1 jediOne  staff     480 Mar 29 19:29 .gitignore
+drwxr-xr-x@  11 jediOne  staff     352 Mar 30 11:56 .next
+drwxr-xr-x@  12 jediOne  staff     384 Mar 29 19:44 config
+-rw-r--r--@   1 jediOne  staff       5 Mar 30 11:46 dev.pid
+drwxr-xr-x@  14 jediOne  staff     448 Mar 29 19:29 docs
+drwxr-xr-x@  10 jediOne  staff     320 Mar 30 11:45 logs
+-rw-r--r--@   1 jediOne  staff     277 Mar 29 20:50 next-env.d.ts
+-rw-r--r--@   1 jediOne  staff    1938 Mar 30 11:56 next.config.ts
+drwxr-xr-x@   3 jediOne  staff      96 Mar 29 19:29 nginx
+drwxr-xr-x@ 387 jediOne  staff   12384 Mar 29 22:30 node_modules
+-rw-r--r--@   1 jediOne  staff  259510 Mar 30 11:46 package-lock.json
+-rw-r--r--@   1 jediOne  staff    1115 Mar 29 22:30 package.json
+-rw-r--r--@   1 jediOne  staff      87 Mar 29 23:59 postcss.config.js
+drwxr-xr-x@   3 jediOne  staff      96 Mar 29 19:45 prisma
+drwxr-xr-x@   7 jediOne  staff     224 Mar 29 19:29 public
+-rw-r--r--@   1 jediOne  staff    1450 Mar 29 19:29 README.md
+drwxr-xr-x@  12 jediOne  staff     384 Mar 30 11:55 scripts
+drwxr-xr-x@   6 jediOne  staff     192 Mar 29 19:29 src
+-rw-r--r--@   1 jediOne  staff    1948 Mar 29 19:46 tailwind.config.js
+-rw-r--r--@   1 jediOne  staff     700 Mar 29 23:59 tsconfig.json
+[2025-03-30 11:57:26] Current directory before navigation: /Users/jediOne/dev/whatsdesigns
+[2025-03-30 11:57:26] Current directory after navigation: /Users/jediOne/dev/whatsdesigns
+[2025-03-30 11:57:26] Directory contents:
+total 600
+drwxr-xr-x@  26 jediOne  staff     832 Mar 30 11:56 .
+drwxr-xr-x   10 jediOne  staff     320 Mar 29 19:29 ..
+drwxr-xr-x@   3 jediOne  staff      96 Mar 29 19:29 .cursor
+-rw-r--r--@   1 jediOne  staff     872 Mar 29 23:59 .env
+-rw-r--r--@   1 jediOne  staff     577 Mar 29 23:59 .env.production
+drwxr-xr-x@  14 jediOne  staff     448 Mar 29 23:43 .git
+-rw-r--r--@   1 jediOne  staff     480 Mar 29 19:29 .gitignore
+drwxr-xr-x@  23 jediOne  staff     736 Mar 30 11:57 .next
+drwxr-xr-x@  12 jediOne  staff     384 Mar 29 19:44 config
+-rw-r--r--@   1 jediOne  staff       5 Mar 30 11:46 dev.pid
+drwxr-xr-x@  14 jediOne  staff     448 Mar 29 19:29 docs
+drwxr-xr-x@  10 jediOne  staff     320 Mar 30 11:45 logs
+-rw-r--r--@   1 jediOne  staff     277 Mar 29 20:50 next-env.d.ts
+-rw-r--r--@   1 jediOne  staff    1938 Mar 30 11:56 next.config.ts
+drwxr-xr-x@   3 jediOne  staff      96 Mar 29 19:29 nginx
+drwxr-xr-x@ 387 jediOne  staff   12384 Mar 29 22:30 node_modules
+-rw-r--r--@   1 jediOne  staff  259510 Mar 30 11:46 package-lock.json
+-rw-r--r--@   1 jediOne  staff    1115 Mar 29 22:30 package.json
+-rw-r--r--@   1 jediOne  staff      87 Mar 29 23:59 postcss.config.js
+drwxr-xr-x@   3 jediOne  staff      96 Mar 29 19:45 prisma
+drwxr-xr-x@   7 jediOne  staff     224 Mar 29 19:29 public
+-rw-r--r--@   1 jediOne  staff    1450 Mar 29 19:29 README.md
+drwxr-xr-x@  12 jediOne  staff     384 Mar 30 11:55 scripts
+drwxr-xr-x@   6 jediOne  staff     192 Mar 29 19:29 src
+-rw-r--r--@   1 jediOne  staff    1948 Mar 29 19:46 tailwind.config.js
+-rw-r--r--@   1 jediOne  staff     700 Mar 29 23:59 tsconfig.json

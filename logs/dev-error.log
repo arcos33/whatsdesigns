@@ -1,0 +1,107 @@
+ ⨯ ./src/app/layout.tsx:5:1
+Module not found: Can't resolve '@/components/auth/AuthProvider'
+  3 | import "./globals.css";
+  4 | import { env } from "@/utils/env";
+> 5 | import { AuthProvider } from "@/components/auth/AuthProvider";
+    | ^
+  6 |
+  7 | const geistSans = Geist({
+  8 |   variable: "--font-geist-sans",
+
+https://nextjs.org/docs/messages/module-not-found
+ ⨯ ./src/app/layout.tsx:5:1
+Module not found: Can't resolve '@/components/auth/AuthProvider'
+  3 | import "./globals.css";
+  4 | import { env } from "@/utils/env";
+> 5 | import { AuthProvider } from "@/components/auth/AuthProvider";
+    | ^
+  6 |
+  7 | const geistSans = Geist({
+  8 |   variable: "--font-geist-sans",
+
+https://nextjs.org/docs/messages/module-not-found
+ ⨯ [Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.] {
+  digest: '2875094618'
+}
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ [Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.] {
+  digest: '2875094618'
+}
+ ⨯ [Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.] {
+  digest: '2875094618'
+}
+ ⨯ ./src/app/api/auth/[...nextauth]/route.ts:5:1
+Module not found: Can't resolve 'bcrypt'
+  3 | import CredentialsProvider from "next-auth/providers/credentials";
+  4 | import GoogleProvider from "next-auth/providers/google";
+> 5 | import { compare } from "bcrypt";
+    | ^
+  6 | import { connectToDatabase } from "@/utils/mongodb";
+  7 |
+  8 | export const authOptions: NextAuthOptions = {
+
+https://nextjs.org/docs/messages/module-not-found
+ ⨯ ./src/app/api/auth/[...nextauth]/route.ts:5:1
+Module not found: Can't resolve 'bcrypt'
+  3 | import CredentialsProvider from "next-auth/providers/credentials";
+  4 | import GoogleProvider from "next-auth/providers/google";
+> 5 | import { compare } from "bcrypt";
+    | ^
+  6 | import { connectToDatabase } from "@/utils/mongodb";
+  7 |
+  8 | export const authOptions: NextAuthOptions = {
+
+https://nextjs.org/docs/messages/module-not-found
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ ./src/app/api/auth/[...nextauth]/route.ts:5:1
+Module not found: Can't resolve 'bcrypt'
+  3 | import CredentialsProvider from "next-auth/providers/credentials";
+  4 | import GoogleProvider from "next-auth/providers/google";
+> 5 | import { compare } from "bcrypt";
+    | ^
+  6 | import { connectToDatabase } from "@/utils/mongodb";
+  7 |
+  8 | export const authOptions: NextAuthOptions = {
+
+https://nextjs.org/docs/messages/module-not-found
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ ./src/app/api/auth/[...nextauth]/route.ts:5:1
+Module not found: Can't resolve 'bcrypt'
+  3 | import CredentialsProvider from "next-auth/providers/credentials";
+  4 | import GoogleProvider from "next-auth/providers/google";
+> 5 | import { compare } from "bcrypt";
+    | ^
+  6 | import { connectToDatabase } from "@/utils/mongodb";
+  7 |
+  8 | export const authOptions: NextAuthOptions = {
+
+https://nextjs.org/docs/messages/module-not-found
+ ⨯ ./src/app/api/auth/[...nextauth]/route.ts:5:1
+Module not found: Can't resolve 'bcrypt'
+  3 | import CredentialsProvider from "next-auth/providers/credentials";
+  4 | import GoogleProvider from "next-auth/providers/google";
+> 5 | import { compare } from "bcrypt";
+    | ^
+  6 | import { connectToDatabase } from "@/utils/mongodb";
+  7 |
+  8 | export const authOptions: NextAuthOptions = {
+
+https://nextjs.org/docs/messages/module-not-found
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ ./src/app/api/auth/[...nextauth]/route.ts:5:1
+Module not found: Can't resolve 'bcrypt'
+  3 | import CredentialsProvider from "next-auth/providers/credentials";
+  4 | import GoogleProvider from "next-auth/providers/google";
+> 5 | import { compare } from "bcrypt";
+    | ^
+  6 | import { connectToDatabase } from "@/utils/mongodb";
+  7 |
+  8 | export const authOptions: NextAuthOptions = {
+
+https://nextjs.org/docs/messages/module-not-found
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
